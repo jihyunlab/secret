@@ -1,0 +1,40 @@
+{
+  "name": "@jihyunlab/secret",
+  "version": "1.0.2",
+  "description": "JihyunLab Secret.",
+  "license": "MIT",
+  "author": "JihyunLab <info@jihyunlab.com> (https://jihyunlab.com)",
+  "homepage": "https://jihyunlab.com/library/npm/secret",
+  "repository": "https://github.com/jihyunlab/secret",
+  "bugs": "https://github.com/jihyunlab/secret/issues",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "tsc --build && node dist/index.js",
+    "clean": "tsc --build --clean",
+    "test": "jest"
+  },
+  "keywords": [
+    "jihyunlab",
+    "secret",
+    "env",
+    "encryption",
+    "decryption"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "@jihyunlab/crypto": "^1.0.2"
+  },
+  "devDependencies": {
+    "@jihyunlab/eslint-config": "^1.0.4",
+    "@jihyunlab/prettier-config": "^1.0.3",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  }
+}
