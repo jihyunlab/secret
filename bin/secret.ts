@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { Crypto } from '../src/index';
-import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { isAbsolute, join, parse } from 'path';
 import { setMaxListeners } from 'events';
 
@@ -97,6 +97,36 @@ function parseOptions(json: Object): {
   return { key: key, mode: mode, input: input, out: out, bak: bak };
 }
 
+function searchDirectory(directory: string): {
+  directories?: string[];
+  files?: string[];
+  errorMessage?: string;
+} {
+  const directories: string[] = [];
+  const files: string[] = [];
+
+  readdirSync(directory, { withFileTypes: true }).forEach((file) => {
+    const path = `${directory}/${file.name}`;
+
+    if (file.isDirectory()) {
+      directories.push(path);
+      const result = searchDirectory(path);
+
+      if (result.directories) {
+        directories.push(...result.directories);
+      }
+
+      if (result.files) {
+        files.push(...result.files);
+      }
+    } else {
+      files.push(path);
+    }
+  });
+
+  return { directories: directories, files: files };
+}
+
 program
   .command('encrypt')
   .option(
@@ -123,7 +153,7 @@ program
       return;
     }
 
-    if (!options['key'] || !options['mode'] || !options['input']) {
+    if (!options['mode'] || !options['input']) {
       return;
     }
 
@@ -177,6 +207,18 @@ program
 
       console.log(`encrypted file: ${input}`);
       return;
+    } else if (options['mode'] === 'dir') {
+      let input;
+
+      if (isAbsolute(options['input'])) {
+        input = options['input'];
+      } else {
+        input = join(process.cwd(), options['input']);
+      }
+
+      const result = searchDirectory(parse(input).dir);
+      console.log(JSON.stringify(result));
+      return;
     }
 
     return;
@@ -208,7 +250,7 @@ program
       return;
     }
 
-    if (!options['key'] || !options['mode'] || !options['input']) {
+    if (!options['mode'] || !options['input']) {
       return;
     }
 
