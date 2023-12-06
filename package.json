@@ -7,11 +7,14 @@
   "homepage": "https://jihyunlab.com/library/npm/secret",
   "repository": "https://github.com/jihyunlab/secret",
   "bugs": "https://github.com/jihyunlab/secret/issues",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "bin": {
+    "secret": "dist/bin/secret.js"
+  },
   "scripts": {
     "build": "tsc --build",
-    "start": "tsc --build && node dist/index.js",
+    "start": "tsc --build && node dist/src/index.js",
     "clean": "tsc --build --clean",
     "test": "jest"
   },
@@ -26,7 +29,9 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@jihyunlab/crypto": "^1.0.2"
+    "@jihyunlab/crypto": "^1.0.2",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@jihyunlab/eslint-config": "^1.0.4",
