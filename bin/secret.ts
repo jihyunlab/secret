@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { Crypto } from '../src/index';
-import { Key } from '../src/helpers/key';
 import { mkdirSync, writeFileSync } from 'fs';
 import { isAbsolute, join, parse } from 'path';
 import { setMaxListeners } from 'events';
@@ -45,17 +44,7 @@ function parseOptions(json: Object): {
 } {
   const options = JSON.parse(JSON.stringify(json));
 
-  let key: string;
-
-  if (options['key']) {
-    key = options['key'];
-  } else {
-    key = Key.load();
-  }
-
-  if (!key) {
-    return { errorMessage: 'key not found.' };
-  }
+  const key = options['key'];
 
   let mode = '';
   let input = '';
@@ -151,7 +140,7 @@ program
     }
 
     if (options['mode'] === 'text') {
-      const encrypted = Crypto.encrypt.string(options['key'], options['input']);
+      const encrypted = Crypto.encrypt.string(options['input'], options['key'], undefined, undefined);
 
       if (out) {
         writeFileSync(out, encrypted);
@@ -211,7 +200,7 @@ program
     }
 
     if (options['mode'] === 'text') {
-      const decrypted = Crypto.decrypt.string(options['key'], options['input']);
+      const decrypted = Crypto.decrypt.string(options['input'], options['key'], undefined, undefined);
 
       if (out) {
         writeFileSync(out, decrypted);

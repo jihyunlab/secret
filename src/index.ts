@@ -1,17 +1,17 @@
 import * as crypto from 'crypto';
-import * as dotenv from 'dotenv';
+// import * as dotenv from 'dotenv';
 import { AEAD, Aead, Helper } from '@jihyunlab/crypto';
 import { Key } from './helpers/key';
 
-export const Env = {
-  load: (config: dotenv.DotenvConfigOutput) => {},
-};
+// export const Env = {
+//   load: (config: dotenv.DotenvConfigOutput) => {},
+// };
 
 export const Crypto = {
   encrypt: {
     string: (
-      key: string | Buffer,
       string: string,
+      key?: string | Buffer,
       inputEncoding?: crypto.Encoding,
       outputEncoding?: BufferEncoding
     ) => {
@@ -22,7 +22,7 @@ export const Crypto = {
       return buffer.toString(outputEncoding ? outputEncoding : 'hex');
     },
 
-    buffer: (key: string | Buffer, buffer: Buffer) => {
+    buffer: (buffer: Buffer, key?: string | Buffer) => {
       const nonce = Helper.nonce.generate(AEAD.AES_256_CCM);
       const encrypted = Aead.create(AEAD.AES_256_CCM, Key.generate(key), 16).encrypt.buffer(buffer, nonce);
 
@@ -32,8 +32,8 @@ export const Crypto = {
 
   decrypt: {
     string: (
-      key: string | Buffer,
       string: string,
+      key?: string | Buffer,
       inputEncoding?: crypto.Encoding,
       outputEncoding?: BufferEncoding
     ) => {
@@ -51,7 +51,7 @@ export const Crypto = {
       return decrypted.toString(outputEncoding ? outputEncoding : 'utf8');
     },
 
-    buffer: (key: string | Buffer, buffer: Buffer) => {
+    buffer: (buffer: Buffer, key?: string | Buffer) => {
       const info = Helper.cipher.info(AEAD.AES_256_CCM);
       const ivLength = info.ivLength ? info.ivLength : 0;
 
@@ -64,5 +64,5 @@ export const Crypto = {
   },
 };
 
-Env.load(dotenv.config());
+// Env.load(dotenv.config());
 // const encrypted = Crypto.encrypt.string('asd');
