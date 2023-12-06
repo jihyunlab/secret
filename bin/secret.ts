@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { Crypto } from '../src/index';
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { isAbsolute, join, parse } from 'path';
 import { setMaxListeners } from 'events';
 
@@ -136,7 +136,7 @@ program
         out = join(process.cwd(), options['out']);
       }
 
-      mkdirSync(parse(parse(out).dir).base, { recursive: true });
+      mkdirSync(parse(out).dir, { recursive: true });
     }
 
     if (options['mode'] === 'text') {
@@ -151,6 +151,31 @@ program
       }
 
       console.log(`encrypted text: ${encrypted}`);
+      return;
+    } else if (options['mode'] === 'file') {
+      let input;
+
+      if (isAbsolute(options['input'])) {
+        input = options['input'];
+      } else {
+        input = join(process.cwd(), options['input']);
+      }
+
+      const buffer = readFileSync(input);
+
+      if (options['bak']) {
+        writeFileSync(`${input}.bak`, buffer);
+      }
+
+      const encrypted = Crypto.encrypt.buffer(buffer, options['key']);
+
+      if (out) {
+        writeFileSync(out, encrypted);
+      } else {
+        writeFileSync(input, encrypted);
+      }
+
+      console.log(`encrypted file: ${input}`);
       return;
     }
 
@@ -211,6 +236,31 @@ program
       }
 
       console.log(`decrypted text: ${decrypted}`);
+      return;
+    } else if (options['mode'] === 'file') {
+      let input;
+
+      if (isAbsolute(options['input'])) {
+        input = options['input'];
+      } else {
+        input = join(process.cwd(), options['input']);
+      }
+
+      const buffer = readFileSync(input);
+
+      if (options['bak']) {
+        writeFileSync(`${input}.bak`, buffer);
+      }
+
+      const decrypted = Crypto.decrypt.buffer(buffer, options['key']);
+
+      if (out) {
+        writeFileSync(out, decrypted);
+      } else {
+        writeFileSync(input, decrypted);
+      }
+
+      console.log(`decrypted file: ${input}`);
       return;
     }
 
