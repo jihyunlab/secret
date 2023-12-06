@@ -11,8 +11,8 @@ const program = new Command('secret')
   .description('JihyunLab secret cli')
   .addHelpText('after', ' ')
   .addHelpText('after', 'Usage examples(help):')
-  .addHelpText('after', '  secret help encrypt')
-  .addHelpText('after', '  secret help decrypt')
+  .addHelpText('after', '  secret encrypt -h')
+  .addHelpText('after', '  secret decrypt -h')
   .addHelpText('after', ' ')
   .addHelpText('after', 'Usage examples(text):')
   .addHelpText('after', '  secret encrypt -k key -t text')
@@ -221,7 +221,7 @@ program
         out = join(process.cwd(), options['out']);
       }
 
-      mkdirSync(parse(parse(out).dir).base, { recursive: true });
+      mkdirSync(parse(out).dir, { recursive: true });
     }
 
     if (options['mode'] === 'text') {
