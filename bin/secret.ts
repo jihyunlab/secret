@@ -18,20 +18,20 @@ const program = new Command('secret')
   .addHelpText('after', '  secret encrypt -k key -t text')
   .addHelpText('after', '  secret decrypt -k key -t text')
   .addHelpText('after', ' ')
-  .addHelpText('after', 'Usage examples(.env):')
-  .addHelpText('after', '  secret encrypt -k key -e .env')
-  .addHelpText('after', '  secret decrypt -k key -e .env')
-  .addHelpText('after', '  secret encrypt -k key -e .env -o .env_enc -b')
-  .addHelpText('after', ' ')
   .addHelpText('after', 'Usage examples(file):')
-  .addHelpText('after', '  secret encrypt -k key -f text.txt')
-  .addHelpText('after', '  secret decrypt -k key -f text.txt')
-  .addHelpText('after', '  secret encrypt -k key -f text.txt -o text_enc.txt -b')
+  .addHelpText('after', '  secret encrypt -k key -f file.txt')
+  .addHelpText('after', '  secret decrypt -k key -f file.txt')
+  .addHelpText('after', '  secret encrypt -f file.txt -o file_enc.txt -b')
   .addHelpText('after', ' ')
   .addHelpText('after', 'Usage examples(dir):')
   .addHelpText('after', '  secret encrypt -k key -d dir')
   .addHelpText('after', '  secret decrypt -k key -d dir')
-  .addHelpText('after', '  secret encrypt -k key -d dir -o dir_enc -b')
+  .addHelpText('after', '  secret encrypt -d dir -o dir_enc -b')
+  .addHelpText('after', ' ')
+  .addHelpText('after', 'Usage examples(.env):')
+  .addHelpText('after', '  secret encrypt -k key -e -f .env')
+  .addHelpText('after', '  secret encrypt -k key -e -d dir')
+  .addHelpText('after', '  secret encrypt -e -d dir -o dir_enc -b')
   .version('1.0.0');
 
 function parseOptions(json: Object): {
@@ -129,23 +129,28 @@ function searchDirectory(directory: string): {
 
 program
   .command('encrypt')
+  .alias('e')
+  .argument('<target>', 'Text, file, or directory.')
   .option(
     '-k, --key <key>',
-    'encryption key.\nif this option is not present, the value of the system environment variable JIHYUNLAB_SECRET_KEY is used'
+    'Encryption key.\nIf this option is not present, the value of the system environment variable JIHYUNLAB_SECRET_KEY is used.'
   )
-  .option('-t, --text <string>', 'text to encrypt')
-  .option('-e, --env <file>', 'location to the .env file to encrypt')
-  .option('-f, --file <file>', 'location of files to encrypt')
-  .option('-d, --dir <dir>', 'directory location to encrypt')
+  .option('-t, --text', 'Encrypt text.')
+  .option('-f, --file', 'Encrypt file.')
+  .option('-d, --dir', 'Encrypt directory.')
+  .option(
+    '-e, --env',
+    'Encrypts only files whose file names begin with .env.\nEncrypts only the values of environment variables defined in the .env file.\nWhen used with the --dir option, only the .env files in the directory are encrypted and no other files are encrypted.'
+  )
   .option(
     '-o, --out <file or dir>',
-    'encrypted output file or directory location.\nwhether the output destination is a file or a directory is determined by the --env, --file, and --dir options.\nif this option is not present, the original file or directory will be overwritten with the encrypted file'
+    'Set the output location for encrypted files or directories.\nIf this option is not present, the original file or directory will be overwritten with the encrypted file.\nWhether the output destination is a file or a directory is determined by the --file, and --dir options.'
   )
   .option(
     '-b, --bak',
-    'create a backup file for the original file and proceed with encryption.\nthe backup file has the extension .bak'
+    'Create a backup file for the original file and proceed with encryption.\nThe backup file has the extension .bak.'
   )
-  .action((json) => {
+  .action((json: Object) => {
     const options = parseOptions(json);
 
     if (options.errorMessage) {
@@ -217,7 +222,8 @@ program
       }
 
       const result = searchDirectory(parse(input).dir);
-      console.log(JSON.stringify(result));
+      // console.log(JSON.stringify(result));
+      console.log(process.cwd(), options['input'], input, parse(input).dir);
       return;
     }
 
@@ -226,23 +232,28 @@ program
 
 program
   .command('decrypt')
+  .alias('d')
+  .argument('<target>', 'Text, file, or directory.')
   .option(
     '-k, --key <key>',
-    'decryption key.\nif this option is not present, the value of the system environment variable JIHYUNLAB_SECRET_KEY is used'
+    'Decryption key.\nIf this option is not present, the value of the system environment variable JIHYUNLAB_SECRET_KEY is used.'
   )
-  .option('-t, --text <string>', 'text to decrypt')
-  .option('-e, --env <file>', 'location to the .env file to decrypt')
-  .option('-f, --file <file>', 'location of files to decrypt')
-  .option('-d, --dir <dir>', 'directory location to decrypt')
+  .option('-t, --text', 'Decrypt text.')
+  .option('-f, --file', 'Decrypt file.')
+  .option('-d, --dir', 'Decrypt directory.')
+  .option(
+    '-e, --env',
+    'Decrypts only files whose file names begin with .env.\nDecrypts only the values of environment variables defined in the .env file.\nWhen used with the --dir option, only the .env files in the directory are decrypted and no other files are decrypted.'
+  )
   .option(
     '-o, --out <file or dir>',
-    'decrypted output file or directory location.\nwhether the output destination is a file or a directory is determined by the --env, --file, and --dir options.\nif this option is not present, the original file or directory will be overwritten with the decrypted file'
+    'Set the output location for decrypted files or directories.\nIf this option is not present, the original file or directory will be overwritten with the decrypted file.\nWhether the output destination is a file or a directory is determined by the --file, and --dir options.'
   )
   .option(
     '-b, --bak',
-    'create a backup file for the original file and proceed with decryption.\nthe backup file has the extension .bak'
+    'Create a backup file for the original file and proceed with decryption.\nThe backup file has the extension .bak.'
   )
-  .action((json) => {
+  .action((json: Object) => {
     const options = parseOptions(json);
 
     if (options.errorMessage) {
