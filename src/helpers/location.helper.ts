@@ -26,6 +26,10 @@ export const Location = {
     return path.normalize(relative);
   },
 
+  toBasename(location: string) {
+    return path.basename(this.toAbsolute(location));
+  },
+
   isExist(location: string) {
     return fs.existsSync(location);
   },

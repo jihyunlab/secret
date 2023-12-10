@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { Text } from './cryptos/text.crypto';
 import { File } from './cryptos/file.crypto';
 import { Directory } from './cryptos/directory.crypto';
+import { Env } from './cryptos/env.crypto';
 import { setMaxListeners } from 'events';
 
 setMaxListeners(36);
@@ -138,6 +139,9 @@ program
     } else if (options['mode'] === 'dir') {
       Directory.encrypt(target, options['key'], options['out'], options['bak']);
       return;
+    } else if (options['mode'] === 'env') {
+      Env.encrypt(target, options['key'], options['out'], options['bak']);
+      return;
     }
 
     return;
@@ -193,6 +197,9 @@ program
       return;
     } else if (options['mode'] === 'dir') {
       Directory.decrypt(target, options['key'], options['out'], options['bak']);
+      return;
+    } else if (options['mode'] === 'env') {
+      Env.decrypt(target, options['key'], options['out'], options['bak']);
       return;
     }
   });

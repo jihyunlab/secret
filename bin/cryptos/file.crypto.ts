@@ -7,6 +7,10 @@ export const File = {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
 
+      if (!LocationHelper.isExist(location)) {
+        throw new Error('input file does not exist.');
+      }
+
       const encrypted = FileCrypto.encrypt(location, key, output);
 
       if (bak) {
@@ -34,6 +38,10 @@ export const File = {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
+
+      if (!LocationHelper.isExist(location)) {
+        throw new Error('input file does not exist.');
+      }
 
       const decrypted = FileCrypto.decrypt(location, key, output);
 

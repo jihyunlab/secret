@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import { Text as TextCrypto } from './cryptos/text.crypto';
 import { File as FileCrypto } from './cryptos/file.crypto';
+import { Env as EnvCrypto } from './cryptos/env.crypto';
 import { Crypto as CryptoHelper } from './helpers/crypto.helper';
 import { Location as LocationHelper } from './helpers/location.helper';
 
@@ -19,6 +20,15 @@ export const File = {
   },
   decrypt: (input: string, key?: string | Buffer, output?: string) => {
     return FileCrypto.decrypt(input, key, output);
+  },
+};
+
+export const Env = {
+  encrypt: (input: string, key?: string | Buffer, output?: string) => {
+    return EnvCrypto.encrypt(input, key, output);
+  },
+  decrypt: (input: string, key?: string | Buffer, output?: string) => {
+    return EnvCrypto.decrypt(input, key, output);
   },
 };
 

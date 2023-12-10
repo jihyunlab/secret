@@ -1,20 +1,20 @@
-import { join } from 'path';
 import { File as FileCrypto, LocationHelper } from '../../src/index';
+import { join } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 
 export const Directory = {
   encrypt: (input: string, key?: string, output?: string, bak = false) => {
     try {
-      const locationInput = LocationHelper.toAbsolute(input);
-      console.log(`input: ${LocationHelper.toRelative(locationInput)}`);
+      const location = LocationHelper.toAbsolute(input);
+      console.log(`input: ${LocationHelper.toRelative(location)}`);
 
       let locationOutput = output;
 
-      if (!LocationHelper.isExist(locationInput)) {
+      if (!LocationHelper.isExist(location)) {
         throw new Error('input directory does not exist.');
       }
 
-      if (!LocationHelper.isDirectory(locationInput)) {
+      if (!LocationHelper.isDirectory(location)) {
         throw new Error('there is a file in the input directory path.');
       }
 
@@ -33,7 +33,7 @@ export const Directory = {
         ignore = readFileSync(ignoreFile).toString();
       }
 
-      const directory = LocationHelper.searchDirectory(locationInput, ignore);
+      const directory = LocationHelper.searchDirectory(location, ignore);
 
       for (let i = 0; i < directory.ignores.length; i++) {
         console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
@@ -49,7 +49,7 @@ export const Directory = {
         let output: string | undefined = undefined;
 
         if (locationOutput) {
-          output = join(locationOutput, file.replace(locationInput, ''));
+          output = join(locationOutput, file.replace(location, ''));
           FileCrypto.encrypt(file, key, output);
           console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
         } else {
@@ -71,16 +71,16 @@ export const Directory = {
 
   decrypt: (input: string, key?: string, output?: string, bak = false) => {
     try {
-      const locationInput = LocationHelper.toAbsolute(input);
-      console.log(`input: ${LocationHelper.toRelative(locationInput)}`);
+      const location = LocationHelper.toAbsolute(input);
+      console.log(`input: ${LocationHelper.toRelative(location)}`);
 
       let locationOutput = output;
 
-      if (!LocationHelper.isExist(locationInput)) {
+      if (!LocationHelper.isExist(location)) {
         throw new Error('input directory does not exist.');
       }
 
-      if (!LocationHelper.isDirectory(locationInput)) {
+      if (!LocationHelper.isDirectory(location)) {
         throw new Error('there is a file in the input directory path.');
       }
 
@@ -99,7 +99,7 @@ export const Directory = {
         ignore = readFileSync(ignoreFile).toString();
       }
 
-      const directory = LocationHelper.searchDirectory(locationInput, ignore);
+      const directory = LocationHelper.searchDirectory(location, ignore);
 
       for (let i = 0; i < directory.ignores.length; i++) {
         console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
@@ -115,7 +115,7 @@ export const Directory = {
         let output: string | undefined = undefined;
 
         if (locationOutput) {
-          output = join(locationOutput, file.replace(locationInput, ''));
+          output = join(locationOutput, file.replace(location, ''));
           FileCrypto.decrypt(file, key, output);
           console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
         } else {
