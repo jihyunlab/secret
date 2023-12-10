@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { Text } from './cryptos/text.crypto';
 import { File } from './cryptos/file.crypto';
+import { Directory } from './cryptos/directory.crypto';
 import { setMaxListeners } from 'events';
 
 setMaxListeners(36);
@@ -39,7 +40,6 @@ function parseOptions(json: Object): {
   input?: string;
   out?: string;
   bak?: boolean;
-  log?: boolean;
   errorMessage?: string;
 } {
   const options = JSON.parse(JSON.stringify(json));
@@ -84,13 +84,7 @@ function parseOptions(json: Object): {
     bak = true;
   }
 
-  let log = true;
-
-  if (options['ignoreLog']) {
-    log = false;
-  }
-
-  return { key: key, mode: mode, out: out, bak: bak, log: log };
+  return { key: key, mode: mode, out: out, bak: bak };
 }
 
 program
@@ -116,7 +110,6 @@ program
     '-b, --bak',
     'create a backup file for the original file and proceed with encryption.\nthe backup file has the extension .bak.'
   )
-  .option('-i, --ignore-log', 'no console logs are output except for text encryption and decryption results.')
   .action((arg: string, json: Object) => {
     const target = arg;
 
@@ -137,26 +130,14 @@ program
     }
 
     if (options['mode'] === 'text') {
-      Text.encrypt(target, options['key'], options['out'], options['bak'], options['log']);
+      Text.encrypt(target, options['key'], options['out'], options['bak']);
       return;
     } else if (options['mode'] === 'file') {
-      File.encrypt(target, options['key'], options['out'], options['bak'], options['log']);
+      File.encrypt(target, options['key'], options['out'], options['bak']);
       return;
     } else if (options['mode'] === 'dir') {
-      /*
-      let input;
-
-      if (isAbsolute(target)) {
-        input = target;
-      } else {
-        input = join(process.cwd(), target);
-      }
-
-      const result = searchDirectory(parse(input).dir);
-      // console.log(JSON.stringify(result));
-      console.log(process.cwd(), target, input, parse(input).dir);
+      Directory.encrypt(target, options['key'], options['out'], options['bak']);
       return;
-      */
     }
 
     return;
@@ -185,7 +166,6 @@ program
     '-b, --bak',
     'create a backup file for the original file and proceed with decryption.\nthe backup file has the extension .bak.'
   )
-  .option('-i, --ignore-log', 'no console logs are output except for text encryption and decryption results.')
   .action((arg: string, json: Object) => {
     const target = arg;
 
@@ -206,14 +186,15 @@ program
     }
 
     if (options['mode'] === 'text') {
-      Text.decrypt(target, options['key'], options['out'], options['bak'], options['log']);
+      Text.decrypt(target, options['key'], options['out'], options['bak']);
       return;
     } else if (options['mode'] === 'file') {
-      File.decrypt(target, options['key'], options['out'], options['bak'], options['log']);
+      File.decrypt(target, options['key'], options['out'], options['bak']);
+      return;
+    } else if (options['mode'] === 'dir') {
+      Directory.decrypt(target, options['key'], options['out'], options['bak']);
       return;
     }
-
-    return;
   });
 
 program.parse();

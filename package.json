@@ -31,7 +31,8 @@
   "dependencies": {
     "@jihyunlab/crypto": "^1.0.4",
     "commander": "^11.1.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "ignore": "^5.3.0"
   },
   "devDependencies": {
     "@jihyunlab/eslint-config": "^1.1.1",

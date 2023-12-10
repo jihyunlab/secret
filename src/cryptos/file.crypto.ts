@@ -10,7 +10,7 @@ export const File = {
       throw new Error('input file does not exist.');
     }
 
-    if (LocationHelper.isDir(location)) {
+    if (LocationHelper.isDirectory(location)) {
       throw new Error('there is a directory in the input path.');
     }
 
@@ -20,11 +20,11 @@ export const File = {
     if (output) {
       const location = LocationHelper.toAbsolute(output);
 
-      if (LocationHelper.isExist(location) && LocationHelper.isDir(location)) {
+      if (LocationHelper.isExist(location) && LocationHelper.isDirectory(location)) {
         throw new Error('there is a directory in the output path.');
       }
 
-      mkdirSync(LocationHelper.toDir(location, true), { recursive: true });
+      mkdirSync(LocationHelper.toDirectory(location, true), { recursive: true });
       writeFileSync(location, encrypted);
     }
 
@@ -38,7 +38,7 @@ export const File = {
       throw new Error('input file does not exist.');
     }
 
-    if (LocationHelper.isDir(location)) {
+    if (LocationHelper.isDirectory(location)) {
       throw new Error('there is a directory in the input path.');
     }
 
@@ -48,11 +48,11 @@ export const File = {
     if (output) {
       const location = LocationHelper.toAbsolute(output);
 
-      if (LocationHelper.isExist(location) && LocationHelper.isDir(location)) {
+      if (LocationHelper.isExist(location) && LocationHelper.isDirectory(location)) {
         throw new Error('there is a directory in the output path.');
       }
 
-      mkdirSync(LocationHelper.toDir(location, true), { recursive: true });
+      mkdirSync(LocationHelper.toDirectory(location, true), { recursive: true });
       writeFileSync(location, decrypted);
     }
 

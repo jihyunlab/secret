@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import ignore from 'ignore';
 
 export const Location = {
   isAbsolute(location: string) {
@@ -18,11 +19,18 @@ export const Location = {
     return path.normalize(absolute);
   },
 
+  toRelative(location: string) {
+    const absolute = this.toAbsolute(location);
+    const relative = path.relative(process.cwd(), absolute);
+
+    return path.normalize(relative);
+  },
+
   isExist(location: string) {
     return fs.existsSync(location);
   },
 
-  isDir(location: string) {
+  isDirectory(location: string) {
     if (!this.isExist(location)) {
       return undefined;
     }
@@ -30,7 +38,7 @@ export const Location = {
     return fs.lstatSync(location).isDirectory();
   },
 
-  toDir(location: string, file = false) {
+  toDirectory(location: string, file = false) {
     let dirname: string;
 
     if (file) {
@@ -42,37 +50,67 @@ export const Location = {
     return path.normalize(dirname);
   },
 
-  /*
+  searchDirectory(location: string, ignores?: string): { dirs: string[]; files: string[]; ignores: string[] } {
+    const dirs: string[] = [];
+    const files: string[] = [];
+    const igs: string[] = [];
 
-function searchDirectory(directory: string): {
-  directories?: string[];
-  files?: string[];
-  errorMessage?: string;
-} {
-  const directories: string[] = [];
-  const files: string[] = [];
+    const ig = ignore();
 
-  readdirSync(directory, { withFileTypes: true }).forEach((file) => {
-    const path = `${directory}/${file.name}`;
-
-    if (file.isDirectory()) {
-      directories.push(path);
-      const result = searchDirectory(path);
-
-      if (result.directories) {
-        directories.push(...result.directories);
-      }
-
-      if (result.files) {
-        files.push(...result.files);
-      }
-    } else {
-      files.push(path);
+    if (ignores) {
+      ig.add(ignores);
     }
-  });
 
-  return { directories: directories, files: files };
-}
+    const locationDirectory = this.toAbsolute(location);
 
-  */
+    fs.readdirSync(locationDirectory, { withFileTypes: true }).forEach((file) => {
+      const locationFile = path.join(locationDirectory, file.name);
+
+      if (file.isDirectory()) {
+        if (!ig.ignores(this.toRelative(locationFile))) {
+          dirs.push(locationFile);
+        } else {
+          igs.push(locationFile);
+        }
+
+        const result = this.searchDirectory(locationFile);
+
+        if (result.dirs) {
+          for (let i = 0; i < result.dirs.length; i++) {
+            const dir = result.dirs[i];
+
+            if (!ig.ignores(this.toRelative(dir))) {
+              dirs.push(dir);
+            } else {
+              igs.push(dir);
+            }
+          }
+        }
+
+        if (result.files) {
+          for (let i = 0; i < result.files.length; i++) {
+            const file = result.files[i];
+
+            if (!ig.ignores(this.toRelative(file))) {
+              files.push(file);
+            } else {
+              igs.push(file);
+            }
+          }
+        }
+
+        if (result.ignores) {
+          igs.push(...result.ignores);
+        }
+      } else {
+        if (!ig.ignores(this.toRelative(locationFile))) {
+          files.push(locationFile);
+        } else {
+          igs.push(locationFile);
+        }
+      }
+    });
+
+    return { dirs: dirs, files: files, ignores: igs };
+  },
 };
