@@ -56,12 +56,32 @@ export const Env = {
 
           if (locationOutput) {
             output = join(locationOutput, file.replace(location, ''));
-            EnvCrypto.encrypt(file, key, output);
-            console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
+            const encrypted = EnvCrypto.encrypt(file, key, output);
+
+            if (encrypted) {
+              console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
+            } else {
+              console.log(
+                `error: ${LocationHelper.toRelative(
+                  output
+                )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+              );
+              return;
+            }
           } else {
             const encrypted = EnvCrypto.encrypt(file, key);
-            writeFileSync(file, encrypted);
-            console.log(`encrypted: ${LocationHelper.toRelative(file)}`);
+
+            if (encrypted) {
+              writeFileSync(file, encrypted);
+              console.log(`encrypted: ${LocationHelper.toRelative(file)}`);
+            } else {
+              console.log(
+                `error: ${LocationHelper.toRelative(
+                  file
+                )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+              );
+              return;
+            }
           }
         }
 
@@ -74,10 +94,28 @@ export const Env = {
         }
 
         if (output) {
-          console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
+          if (encrypted) {
+            console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
+          } else {
+            console.log(
+              `error: ${LocationHelper.toRelative(
+                output
+              )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+            );
+            return;
+          }
         } else {
-          writeFileSync(location, encrypted);
-          console.log(`encrypted: ${LocationHelper.toRelative(location)}`);
+          if (encrypted) {
+            writeFileSync(location, encrypted);
+            console.log(`encrypted: ${LocationHelper.toRelative(location)}`);
+          } else {
+            console.log(
+              `error: ${LocationHelper.toRelative(
+                location
+              )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+            );
+            return;
+          }
         }
 
         console.log('.env file encryption success.');
@@ -144,12 +182,32 @@ export const Env = {
 
           if (locationOutput) {
             output = join(locationOutput, file.replace(location, ''));
-            EnvCrypto.decrypt(file, key, output);
-            console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
+            const decrypted = EnvCrypto.decrypt(file, key, output);
+
+            if (decrypted) {
+              console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
+            } else {
+              console.log(
+                `error: ${LocationHelper.toRelative(
+                  output
+                )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+              );
+              return;
+            }
           } else {
             const decrypted = EnvCrypto.decrypt(file, key);
-            writeFileSync(file, decrypted);
-            console.log(`decrypted: ${LocationHelper.toRelative(file)}`);
+
+            if (decrypted) {
+              writeFileSync(file, decrypted);
+              console.log(`decrypted: ${LocationHelper.toRelative(file)}`);
+            } else {
+              console.log(
+                `error: ${LocationHelper.toRelative(
+                  file
+                )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+              );
+              return;
+            }
           }
         }
 
@@ -162,10 +220,28 @@ export const Env = {
         }
 
         if (output) {
-          console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
+          if (decrypted) {
+            console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
+          } else {
+            console.log(
+              `error: ${LocationHelper.toRelative(
+                output
+              )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+            );
+            return;
+          }
         } else {
-          writeFileSync(location, decrypted);
-          console.log(`decrypted: ${LocationHelper.toRelative(location)}`);
+          if (decrypted) {
+            writeFileSync(location, decrypted);
+            console.log(`decrypted: ${LocationHelper.toRelative(location)}`);
+          } else {
+            console.log(
+              `error: ${LocationHelper.toRelative(
+                location
+              )} file is formatted incorrectly. the .env file must consist of KEY=VALUE.`
+            );
+            return;
+          }
         }
 
         console.log('.env file decryption success.');
