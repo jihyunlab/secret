@@ -32,12 +32,17 @@ export const Env = {
 
         const directory = LocationHelper.searchDirectory(location, ignore);
 
-        for (let i = 0; i < directory.ignores.length; i++) {
-          console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
-        }
+        // for (let i = 0; i < directory.ignores.length; i++) {
+        //   console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
+        // }
 
         for (let i = 0; i < directory.files.length; i++) {
           const file = directory.files[i];
+
+          if (!LocationHelper.toBasename(file).startsWith('.secretignore')) {
+            console.log(`ignored: ${LocationHelper.toRelative(file)}`);
+            continue;
+          }
 
           if (!LocationHelper.toBasename(file).startsWith('.env')) {
             continue;
@@ -115,12 +120,17 @@ export const Env = {
 
         const directory = LocationHelper.searchDirectory(location, ignore);
 
-        for (let i = 0; i < directory.ignores.length; i++) {
-          console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
-        }
+        // for (let i = 0; i < directory.ignores.length; i++) {
+        //   console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
+        // }
 
         for (let i = 0; i < directory.files.length; i++) {
           const file = directory.files[i];
+
+          if (!LocationHelper.toBasename(file).startsWith('.secretignore')) {
+            console.log(`ignored: ${LocationHelper.toRelative(file)}`);
+            continue;
+          }
 
           if (!LocationHelper.toBasename(file).startsWith('.env')) {
             continue;
