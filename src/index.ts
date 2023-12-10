@@ -4,7 +4,7 @@ import { Env as EnvCrypto } from './cryptos/env.crypto';
 import { Crypto as CryptoHelper } from './helpers/crypto.helper';
 import { Location as LocationHelper } from './helpers/location.helper';
 import { Encoding } from 'crypto';
-import { DotenvConfigOutput, config } from 'dotenv';
+import { DotenvConfigOutput } from 'dotenv';
 
 export const Text = {
   encrypt: (text: string, key?: string | Buffer) => {
@@ -63,5 +63,3 @@ export const Crypto = {
 };
 
 export { LocationHelper };
-
-Env.load(config());
