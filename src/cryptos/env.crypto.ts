@@ -1,9 +1,31 @@
 import { Crypto as CryptoHelper } from '../helpers/crypto.helper';
 import { Location as LocationHelper } from '../helpers/location.helper';
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { parse } from 'dotenv';
+import { DotenvConfigOutput, DotenvPopulateInput, parse, populate } from 'dotenv';
 
 export const Env = {
+  load: (config: DotenvConfigOutput, key?: string) => {
+    const parsed = config['parsed'];
+
+    if (parsed) {
+      const envKeys = Object.keys(parsed);
+      const input: DotenvPopulateInput = {};
+
+      for (let i = 0; i < envKeys.length; i++) {
+        const envKey = envKeys[i];
+
+        const value = parsed[envKey];
+        input[envKey] = CryptoHelper.decrypt.string(value, key);
+      }
+
+      let processEnv = process.env as DotenvPopulateInput;
+
+      if (processEnv) {
+        populate(processEnv, input, { override: true });
+      }
+    }
+  },
+
   encrypt: (input: string, key?: string | Buffer, output?: string) => {
     const location = LocationHelper.toAbsolute(input);
 
