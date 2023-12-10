@@ -22,7 +22,7 @@ export const Env = {
     const env = parse(readFileSync(location));
     const envKeys = Object.keys(env);
 
-    let encrypted = undefined;
+    let encrypted = '';
 
     for (let i = 0; i < envKeys.length; i++) {
       const envKey = envKeys[i];
@@ -31,7 +31,7 @@ export const Env = {
       encrypted = encrypted + `${envKey}=${CryptoHelper.encrypt.string(value, key)}\n`;
     }
 
-    if (output && encrypted) {
+    if (output) {
       const location = LocationHelper.toAbsolute(output);
 
       if (LocationHelper.isExist(location) && LocationHelper.isDirectory(location)) {
