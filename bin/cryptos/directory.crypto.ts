@@ -1,6 +1,6 @@
 import { File as FileCrypto, LocationHelper } from '../../src/index';
 import { join } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, cpSync, rmSync } from 'fs';
 
 export const Directory = {
   encrypt: (input: string, key?: string, output?: string, bak = false) => {
@@ -39,6 +39,17 @@ export const Directory = {
       //   console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
       // }
 
+      let temporaryOutput = false;
+
+      if (!locationOutput) {
+        temporaryOutput = true;
+        locationOutput = LocationHelper.toAbsolute('secret_temporary');
+
+        if (LocationHelper.isExist(locationOutput)) {
+          rmSync(locationOutput, { recursive: true, force: true });
+        }
+      }
+
       for (let i = 0; i < directory.files.length; i++) {
         const file = directory.files[i];
 
@@ -56,11 +67,15 @@ export const Directory = {
         if (locationOutput) {
           output = join(locationOutput, file.replace(location, ''));
           FileCrypto.encrypt(file, key, output);
-          console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
-        } else {
-          const encrypted = FileCrypto.encrypt(file, key);
-          writeFileSync(file, encrypted);
           console.log(`encrypted: ${LocationHelper.toRelative(file)}`);
+        }
+      }
+
+      if (temporaryOutput) {
+        cpSync(locationOutput, location, { recursive: true, force: true });
+
+        if (LocationHelper.isExist(locationOutput)) {
+          rmSync(locationOutput, { recursive: true, force: true });
         }
       }
 
@@ -110,6 +125,17 @@ export const Directory = {
       //   console.log(`ignored: ${LocationHelper.toRelative(directory.ignores[i])}`);
       // }
 
+      let temporaryOutput = false;
+
+      if (!locationOutput) {
+        temporaryOutput = true;
+        locationOutput = LocationHelper.toAbsolute('secret_temporary');
+
+        if (LocationHelper.isExist(locationOutput)) {
+          rmSync(locationOutput, { recursive: true, force: true });
+        }
+      }
+
       for (let i = 0; i < directory.files.length; i++) {
         const file = directory.files[i];
 
@@ -127,11 +153,15 @@ export const Directory = {
         if (locationOutput) {
           output = join(locationOutput, file.replace(location, ''));
           FileCrypto.decrypt(file, key, output);
-          console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
-        } else {
-          const decrypted = FileCrypto.decrypt(file, key);
-          writeFileSync(file, decrypted);
           console.log(`decrypted: ${LocationHelper.toRelative(file)}`);
+        }
+      }
+
+      if (temporaryOutput) {
+        cpSync(locationOutput, location, { recursive: true, force: true });
+
+        if (LocationHelper.isExist(locationOutput)) {
+          rmSync(locationOutput, { recursive: true, force: true });
         }
       }
 
