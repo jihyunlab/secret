@@ -39,7 +39,7 @@ export const Env = {
         for (let i = 0; i < directory.files.length; i++) {
           const file = directory.files[i];
 
-          if (!LocationHelper.toBasename(file).startsWith('.secretignore')) {
+          if (LocationHelper.toBasename(file).startsWith('.secretignore')) {
             console.log(`ignored: ${LocationHelper.toRelative(file)}`);
             continue;
           }
@@ -127,7 +127,7 @@ export const Env = {
         for (let i = 0; i < directory.files.length; i++) {
           const file = directory.files[i];
 
-          if (!LocationHelper.toBasename(file).startsWith('.secretignore')) {
+          if (LocationHelper.toBasename(file).startsWith('.secretignore')) {
             console.log(`ignored: ${LocationHelper.toRelative(file)}`);
             continue;
           }
