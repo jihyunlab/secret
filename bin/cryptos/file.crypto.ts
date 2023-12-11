@@ -2,7 +2,7 @@ import { File as FileCrypto, LocationHelper } from '../../src/index';
 import { readFileSync, writeFileSync } from 'fs';
 
 export const File = {
-  encrypt: (input: string, key?: string, output?: string, bak = false) => {
+  encrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -11,7 +11,7 @@ export const File = {
         throw new Error('input file does not exist.');
       }
 
-      const encrypted = FileCrypto.encrypt(location, key, output);
+      const encrypted = FileCrypto.encrypt(location, output, key);
 
       if (bak) {
         writeFileSync(`${location}.bak`, readFileSync(location));
@@ -34,7 +34,7 @@ export const File = {
     }
   },
 
-  decrypt: (input: string, key?: string, output?: string, bak = false) => {
+  decrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -43,7 +43,7 @@ export const File = {
         throw new Error('input file does not exist.');
       }
 
-      const decrypted = FileCrypto.decrypt(location, key, output);
+      const decrypted = FileCrypto.decrypt(location, output, key);
 
       if (bak) {
         writeFileSync(`${location}.bak`, readFileSync(location));

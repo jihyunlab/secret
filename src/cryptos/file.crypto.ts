@@ -3,7 +3,7 @@ import { Location as LocationHelper } from '../helpers/location.helper';
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 export const File = {
-  encrypt: (input: string, key?: string | Buffer, output?: string) => {
+  encrypt: (input: string, output?: string, key?: string | Buffer) => {
     const location = LocationHelper.toAbsolute(input);
 
     if (!LocationHelper.isExist(location)) {
@@ -31,7 +31,7 @@ export const File = {
     return encrypted;
   },
 
-  decrypt: (input: string, key?: string | Buffer, output?: string) => {
+  decrypt: (input: string, output?: string, key?: string | Buffer) => {
     const location = LocationHelper.toAbsolute(input);
 
     if (!LocationHelper.isExist(location)) {

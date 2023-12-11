@@ -17,12 +17,12 @@ export const Text = {
 };
 
 export const File = {
-  encrypt: (input: string, key?: string | Buffer, output?: string) => {
-    return FileCrypto.encrypt(input, key, output);
+  encrypt: (input: string, output?: string, key?: string | Buffer) => {
+    return FileCrypto.encrypt(input, output, key);
   },
 
-  decrypt: (input: string, key?: string | Buffer, output?: string) => {
-    return FileCrypto.decrypt(input, key, output);
+  decrypt: (input: string, output?: string, key?: string | Buffer) => {
+    return FileCrypto.decrypt(input, output, key);
   },
 };
 
@@ -31,19 +31,19 @@ export const Env = {
     EnvCrypto.load(config, key);
   },
 
-  encrypt: (input: string, key?: string | Buffer, output?: string) => {
-    return EnvCrypto.encrypt(input, key, output);
+  encrypt: (input: string, output?: string, key?: string | Buffer) => {
+    return EnvCrypto.encrypt(input, output, key);
   },
 
-  decrypt: (input: string, key?: string | Buffer, output?: string) => {
-    return EnvCrypto.decrypt(input, key, output);
+  decrypt: (input: string, output?: string, key?: string | Buffer) => {
+    return EnvCrypto.decrypt(input, output, key);
   },
 };
 
 export const Crypto = {
   encrypt: {
-    string: (string: string, key?: string | Buffer, inputEncoding?: Encoding, outputEncoding?: BufferEncoding) => {
-      return CryptoHelper.encrypt.string(string, key, inputEncoding, outputEncoding);
+    string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
+      return CryptoHelper.encrypt.string(string, inputEncoding, outputEncoding, key);
     },
 
     buffer: (buffer: Buffer, key?: string | Buffer) => {
@@ -52,8 +52,8 @@ export const Crypto = {
   },
 
   decrypt: {
-    string: (string: string, key?: string | Buffer, inputEncoding?: Encoding, outputEncoding?: BufferEncoding) => {
-      return CryptoHelper.decrypt.string(string, key, inputEncoding, outputEncoding);
+    string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.string(string, inputEncoding, outputEncoding, key);
     },
 
     buffer: (buffer: Buffer, key?: string | Buffer) => {

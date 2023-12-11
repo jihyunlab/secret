@@ -131,16 +131,24 @@ program
     }
 
     if (options['mode'] === 'text') {
-      Text.encrypt(target, options['key'], options['out'], options['bak']);
+      if (options['out']) {
+        console.log('warning: the -o option cannot be used when encrypting text.');
+      }
+
+      if (options['bak']) {
+        console.log('warning: the -b option cannot be used when encrypting text.');
+      }
+
+      Text.encrypt(target, options['key']);
       return;
     } else if (options['mode'] === 'file') {
-      File.encrypt(target, options['key'], options['out'], options['bak']);
+      File.encrypt(target, options['out'], options['bak'], options['key']);
       return;
     } else if (options['mode'] === 'dir') {
-      Directory.encrypt(target, options['key'], options['out'], options['bak']);
+      Directory.encrypt(target, options['out'], options['bak'], options['key']);
       return;
     } else if (options['mode'] === 'env') {
-      Env.encrypt(target, options['key'], options['out'], options['bak']);
+      Env.encrypt(target, options['out'], options['bak'], options['key']);
       return;
     }
 
@@ -190,16 +198,24 @@ program
     }
 
     if (options['mode'] === 'text') {
-      Text.decrypt(target, options['key'], options['out'], options['bak']);
+      if (options['out']) {
+        console.log('warning: the -o option cannot be used when decrypting text.');
+      }
+
+      if (options['bak']) {
+        console.log('warning: the -b option cannot be used when decrypting text.');
+      }
+
+      Text.decrypt(target, options['key']);
       return;
     } else if (options['mode'] === 'file') {
-      File.decrypt(target, options['key'], options['out'], options['bak']);
+      File.decrypt(target, options['out'], options['bak'], options['key']);
       return;
     } else if (options['mode'] === 'dir') {
-      Directory.decrypt(target, options['key'], options['out'], options['bak']);
+      Directory.decrypt(target, options['out'], options['bak'], options['key']);
       return;
     } else if (options['mode'] === 'env') {
-      Env.decrypt(target, options['key'], options['out'], options['bak']);
+      Env.decrypt(target, options['out'], options['bak'], options['key']);
       return;
     }
   });

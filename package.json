@@ -21,9 +21,12 @@
   "keywords": [
     "jihyunlab",
     "secret",
-    "env",
+    "crypto",
     "encryption",
-    "decryption"
+    "decryption",
+    "text",
+    "file",
+    "env"
   ],
   "engines": {
     "node": ">=10"

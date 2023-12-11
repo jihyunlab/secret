@@ -3,7 +3,7 @@ import { join } from 'path';
 import { readFileSync, writeFileSync, cpSync, rmSync } from 'fs';
 
 export const Directory = {
-  encrypt: (input: string, key?: string, output?: string, bak = false) => {
+  encrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -66,7 +66,7 @@ export const Directory = {
 
         if (locationOutput) {
           output = join(locationOutput, file.replace(location, ''));
-          FileCrypto.encrypt(file, key, output);
+          FileCrypto.encrypt(file, output, key);
           console.log(`encrypted: ${LocationHelper.toRelative(file)}`);
         }
       }
@@ -89,7 +89,7 @@ export const Directory = {
     }
   },
 
-  decrypt: (input: string, key?: string, output?: string, bak = false) => {
+  decrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -152,7 +152,7 @@ export const Directory = {
 
         if (locationOutput) {
           output = join(locationOutput, file.replace(location, ''));
-          FileCrypto.decrypt(file, key, output);
+          FileCrypto.decrypt(file, output, key);
           console.log(`decrypted: ${LocationHelper.toRelative(file)}`);
         }
       }

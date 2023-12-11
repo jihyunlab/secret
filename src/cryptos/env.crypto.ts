@@ -15,7 +15,7 @@ export const Env = {
         const envKey = envKeys[i];
 
         const value = parsed[envKey];
-        input[envKey] = CryptoHelper.decrypt.string(value, key);
+        input[envKey] = CryptoHelper.decrypt.string(value, 'hex', 'utf8', key);
       }
 
       let processEnv = process.env as DotenvPopulateInput;
@@ -26,7 +26,7 @@ export const Env = {
     }
   },
 
-  encrypt: (input: string, key?: string | Buffer, output?: string) => {
+  encrypt: (input: string, output?: string, key?: string | Buffer) => {
     const location = LocationHelper.toAbsolute(input);
 
     if (!LocationHelper.isExist(location)) {
@@ -50,7 +50,7 @@ export const Env = {
       const envKey = envKeys[i];
 
       const value = env[envKey];
-      encrypted = encrypted + `${envKey}=${CryptoHelper.encrypt.string(value, key)}\n`;
+      encrypted = encrypted + `${envKey}=${CryptoHelper.encrypt.string(value, 'utf8', 'hex', key)}\n`;
     }
 
     if (output) {
@@ -67,7 +67,7 @@ export const Env = {
     return encrypted;
   },
 
-  decrypt: (input: string, key?: string | Buffer, output?: string) => {
+  decrypt: (input: string, output?: string, key?: string | Buffer) => {
     const location = LocationHelper.toAbsolute(input);
 
     if (!LocationHelper.isExist(location)) {
@@ -91,7 +91,7 @@ export const Env = {
       const envKey = envKeys[i];
 
       const value = env[envKey];
-      decrypted = decrypted + `${envKey}=${CryptoHelper.decrypt.string(value, key)}\n`;
+      decrypted = decrypted + `${envKey}=${CryptoHelper.decrypt.string(value, 'hex', 'utf8', key)}\n`;
     }
 
     if (output) {

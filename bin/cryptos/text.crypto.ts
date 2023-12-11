@@ -1,18 +1,9 @@
 import { Text as TextCrypto } from '../../src/index';
 
 export const Text = {
-  encrypt: (text: string, key?: string, output?: string, bak = false) => {
+  encrypt: (text: string, key?: string) => {
     try {
       console.log(`text: ${text}`);
-
-      if (output) {
-        console.log('warning: the -o option cannot be used when encrypting text.');
-      }
-
-      if (bak) {
-        console.log('warning: the -b option cannot be used when encrypting text.');
-      }
-
       const encrypted = TextCrypto.encrypt(text, key);
 
       console.log(`encrypted: ${encrypted}`);
@@ -26,18 +17,9 @@ export const Text = {
     }
   },
 
-  decrypt: (hex: string, key?: string, output?: string, bak = false) => {
+  decrypt: (hex: string, key?: string) => {
     try {
       console.log(`text: ${hex}`);
-
-      if (output) {
-        console.log('warning: the -o option cannot be used when decrypting text.');
-      }
-
-      if (bak) {
-        console.log('warning: the -b option cannot be used when decrypting text.');
-      }
-
       const decrypted = TextCrypto.decrypt(hex, key);
 
       console.log(`decrypted: ${decrypted}`);

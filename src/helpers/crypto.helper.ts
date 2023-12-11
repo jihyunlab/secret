@@ -4,7 +4,7 @@ import { Encoding } from 'crypto';
 
 export const Crypto = {
   encrypt: {
-    string: (string: string, key?: string | Buffer, inputEncoding?: Encoding, outputEncoding?: BufferEncoding) => {
+    string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
       const nonce = Helper.nonce.generate(AEAD.AES_256_CCM);
       const encrypted = Aead.create(AEAD.AES_256_CCM, Key.generate(key), 16).encrypt.hex(string, nonce, inputEncoding);
       const buffer = Buffer.concat([nonce, Buffer.from(encrypted.text, 'hex'), encrypted.tag]);
@@ -21,7 +21,7 @@ export const Crypto = {
   },
 
   decrypt: {
-    string: (string: string, key?: string | Buffer, inputEncoding?: Encoding, outputEncoding?: BufferEncoding) => {
+    string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
       const buffer = Buffer.from(string, inputEncoding ? inputEncoding : 'hex');
 
       const info = Helper.cipher.info(AEAD.AES_256_CCM);

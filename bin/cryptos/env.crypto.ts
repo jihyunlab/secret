@@ -3,7 +3,7 @@ import { join } from 'path';
 import { cpSync, readFileSync, rmSync, writeFileSync } from 'fs';
 
 export const Env = {
-  encrypt: (input: string, key?: string, output?: string, bak = false) => {
+  encrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -67,7 +67,7 @@ export const Env = {
 
           if (locationOutput) {
             output = join(locationOutput, file.replace(location, ''));
-            EnvCrypto.encrypt(file, key, output);
+            EnvCrypto.encrypt(file, output, key);
             console.log(`encrypted: ${LocationHelper.toRelative(output)}`);
           }
         }
@@ -82,7 +82,7 @@ export const Env = {
 
         console.log('.env directory encryption success.');
       } else {
-        const encrypted = EnvCrypto.encrypt(location, key, output);
+        const encrypted = EnvCrypto.encrypt(location, output, key);
 
         if (bak) {
           writeFileSync(`${location}.bak`, readFileSync(location));
@@ -106,7 +106,7 @@ export const Env = {
     }
   },
 
-  decrypt: (input: string, key?: string, output?: string, bak = false) => {
+  decrypt: (input: string, output?: string, bak = false, key?: string) => {
     try {
       const location = LocationHelper.toAbsolute(input);
       console.log(`input: ${LocationHelper.toRelative(location)}`);
@@ -170,7 +170,7 @@ export const Env = {
 
           if (locationOutput) {
             output = join(locationOutput, file.replace(location, ''));
-            EnvCrypto.decrypt(file, key, output);
+            EnvCrypto.decrypt(file, output, key);
             console.log(`decrypted: ${LocationHelper.toRelative(output)}`);
           }
         }
@@ -185,7 +185,7 @@ export const Env = {
 
         console.log('.env directory decryption success.');
       } else {
-        const decrypted = EnvCrypto.decrypt(location, key, output);
+        const decrypted = EnvCrypto.decrypt(location, output, key);
 
         if (bak) {
           writeFileSync(`${location}.bak`, readFileSync(location));
