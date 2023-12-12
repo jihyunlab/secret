@@ -74,9 +74,9 @@ import { Text, File } from '@jihyunlab/secret';
 import { writeFileSync } from 'fs';
 
 const encrypted = Text.encrypt('string');
-writeFileSync('file', Buffer.from(encrypted, 'hex'));
+writeFileSync('file_enc', Buffer.from(encrypted, 'hex'));
 
-const decrypted = File.decrypt('file');
+const decrypted = File.decrypt('file_enc');
 decrypted.toString('utf8');
 ```
 
