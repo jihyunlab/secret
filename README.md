@@ -4,7 +4,7 @@
 
 @jihyunlab/secret provides text and file encryption functions that can be easily used without separate implementation.\
 @jihyunlab/secret provides an encryption function using AES-256-CCM and securely manages the encryption key by using environment variables as the encryption key.
-It also provides a way to enter keys directly into your code.
+It also provides a way to input keys directly into your code.
 
 ## Requirements
 
@@ -31,14 +31,14 @@ Text encryption encrypts the input text and returns an encrypted hex string.
 ```javascript
 import { Text } from '@jihyunlab/secret';
 
-const encrypted = Text.encrypt('hello');
+const encrypted = Text.encrypt('string');
 const decrypted = Text.decrypt(encrypted);
 ```
 
-Instead of using an encryption key from an environment variable, you can enter the key directly.
+Instead of using an encryption key from an environment variable, you can input the key directly.
 
 ```javascript
-const encrypted = Text.encrypt('hello', 'your key');
+const encrypted = Text.encrypt('string', 'your key');
 const decrypted = Text.decrypt(encrypted, 'your key');
 ```
 
@@ -60,11 +60,24 @@ const encrypted = File.encrypt('file', 'file_enc');
 const decrypted = File.decrypt('file_enc', 'file_dec');
 ```
 
-Instead of using an encryption key from an environment variable, you can enter the key directly.
+Instead of using an encryption key from an environment variable, you can input the key directly.
 
 ```javascript
 const encrypted = File.encrypt('file', 'file_enc', 'your key');
 const decrypted = File.decrypt('file_enc', 'file_dec', 'your key');
+```
+
+If you want to mix text and file encryption features, please see below.
+
+```javascript
+import { Text, File } from '@jihyunlab/secret';
+import { writeFileSync } from 'fs';
+
+const encrypted = Text.encrypt('string');
+writeFileSync('file', Buffer.from(encrypted, 'hex'));
+
+const decrypted = File.decrypt('file');
+decrypted.toString('utf8');
 ```
 
 ## Credits

@@ -1,7 +1,7 @@
 import { File } from '../src/index';
 import { readFileSync, rmSync, writeFileSync } from 'fs';
 
-describe('Text', () => {
+describe('File', () => {
   const keyString = 'JihyunLab';
   const keyBuffer = Buffer.from(keyString, 'utf8');
 
