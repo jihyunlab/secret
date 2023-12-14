@@ -21,7 +21,7 @@ export const Key = {
     }
 
     return Helper.key.generate(
-      AEAD.AES_256_CCM,
+      AEAD.AES_256_GCM,
       Hash.create(HASH.SHA512).update(loadedKey).hex(),
       Hash.create(HASH.SHA512).update('').hex()
     );

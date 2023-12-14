@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/npm/v/@jihyunlab/secret.svg?style=flat-square)](https://www.npmjs.com/package/@jihyunlab/secret?activeTab=versions) [![Downloads](https://img.shields.io/npm/dt/@jihyunlab/secret.svg?style=flat-square)](https://www.npmjs.com/package/@jihyunlab/secret) [![Last commit](https://img.shields.io/github/last-commit/jihyunlab/secret.svg?style=flat-square)](https://github.com/jihyunlab/secret/graphs/commit-activity) [![License](https://img.shields.io/github/license/jihyunlab/secret.svg?style=flat-square)](https://github.com/jihyunlab/secret/blob/master/LICENSE)
 
 @jihyunlab/secret provides text and file encryption functions that can be easily used without separate implementation.\
-@jihyunlab/secret provides an encryption function using AES-256-CCM and securely manages the encryption key by using environment variables as the encryption key.
+@jihyunlab/secret provides an encryption function using AES-256-GCM and securely manages the encryption key by using environment variables as the encryption key.
 It also provides a way to input keys directly into your code.
 
 ## Requirements
