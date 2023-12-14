@@ -4,7 +4,7 @@
 
 @jihyunlab/secret provides text and file encryption functions that can be easily used without separate implementation.\
 @jihyunlab/secret provides an encryption function using AES-256-GCM and securely manages the encryption key by using environment variables as the encryption key.
-It also provides a way to input keys directly into your code.
+Additionally, you can install the command line interface tool [@jihyunlab/secret-cli](https://www.npmjs.com/package/@jihyunlab/secret-cli) library.
 
 ## Requirements
 
@@ -78,6 +78,29 @@ writeFileSync('file_enc', Buffer.from(encrypted, 'hex'));
 
 const decrypted = File.decrypt('file_enc');
 decrypted.toString('utf8');
+```
+
+## Encrypted .env
+
+You can decrypt and use .env encrypted with [@jihyunlab/secret-cli](https://www.npmjs.com/package/@jihyunlab/secret-cli) in a simple way.
+
+```.env
+TEXT=d879f8dfb00b7f9d73bf755569726ed296332765988e28dda664350291f4ca382cff501e82
+```
+
+```javascript
+import { Env } from '@jihyunlab/secret';
+import { config } from 'dotenv';
+
+Env.load(config());
+console.log(process.env.TEXT);
+```
+
+If you use a library other than dotenv, you can still decode the contents of environment variables.
+
+```javascript
+const text = Text.decrypt(process.env.TEXT || '');
+console.log(text);
 ```
 
 ## Credits
