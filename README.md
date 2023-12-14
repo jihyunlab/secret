@@ -96,7 +96,7 @@ Env.load(config());
 console.log(process.env.TEXT);
 ```
 
-If you use a library other than dotenv, you can still decode the contents of environment variables.
+If you use a library other than dotenv, you can still decrypt the contents of environment variables.
 
 ```javascript
 const text = Text.decrypt(process.env.TEXT || '');
