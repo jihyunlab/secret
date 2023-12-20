@@ -14,7 +14,7 @@
     "start": "tsc --build && node dist/src/index.js",
     "clean": "tsc --build --clean",
     "test": "jest",
-    "coverage": "jest --coverage --coverageReporters=cobertura"
+    "test:coverage": "jest --coverage --coverageReporters=cobertura"
   },
   "keywords": [
     "secret",
