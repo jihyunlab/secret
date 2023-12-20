@@ -1,5 +1,6 @@
 import { File } from '../src/index';
-import { readFileSync, rmSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 
 describe('File', () => {
   const keyString = 'JihyunLab';
@@ -7,12 +8,22 @@ describe('File', () => {
 
   const textString = 'Welcome to JihyunLab.';
 
-  const file = 'test/plain.txt';
-  const encryptedFile = 'test/encrypted.enc';
-  const decryptedFile = 'test/decrypted.enc';
+  const base = 'test-file';
+
+  const file = join(base, 'plain.txt');
+  const encryptedFile = join(base, 'encrypted.enc');
+  const decryptedFile = join(base, 'decrypted.enc');
+
+  beforeAll(() => {
+    process.env.JIHYUNLAB_SECRET_KEY = keyString;
+    mkdirSync(base, { recursive: true });
+  });
+
+  afterAll(() => {
+    rmSync(base, { recursive: true, force: true });
+  });
 
   beforeEach(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = keyString;
     writeFileSync(file, textString);
   });
 
