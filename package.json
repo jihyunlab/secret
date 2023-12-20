@@ -13,10 +13,10 @@
     "build": "tsc --build",
     "start": "tsc --build && node dist/src/index.js",
     "clean": "tsc --build --clean",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage --coverageReporters=cobertura"
   },
   "keywords": [
-    "jihyunlab",
     "secret",
     "crypto",
     "encryption",
