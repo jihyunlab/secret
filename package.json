@@ -13,7 +13,7 @@
     "build": "tsc --build",
     "start": "tsc --build && node dist/src/index.js",
     "clean": "tsc --build --clean",
-    "lint": "node_modules/.bin/eslint 'src/**/*.{ts,tsx,js,jsx}' && node_modules/.bin/eslint 'test/**/*.{ts,tsx,js,jsx}'",
+    "lint": "node node_modules/.bin/eslint 'src/**/*.{ts,tsx,js,jsx}' && node node_modules/.bin/eslint 'test/**/*.{ts,tsx,js,jsx}'",
     "test": "jest"
   },
   "keywords": [
