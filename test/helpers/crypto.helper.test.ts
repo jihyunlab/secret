@@ -1,4 +1,4 @@
-import { Crypto } from '../src/index';
+import { Crypto } from '../../src/index';
 
 describe('Crypto', () => {
   const keyString = 'JihyunLab';

@@ -1,4 +1,4 @@
-import { Text } from '../src/index';
+import { Text } from '../../src/index';
 
 describe('Text', () => {
   const keyString = 'JihyunLab';

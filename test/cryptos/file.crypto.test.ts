@@ -1,4 +1,4 @@
-import { File } from '../src/index';
+import { File } from '../../src/index';
 import { join } from 'path';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 

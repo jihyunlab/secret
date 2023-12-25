@@ -1,6 +1,6 @@
-import { Env } from '../src/index';
+import { Env } from '../../src/index';
 import { config } from 'dotenv';
-import { mkdirSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 describe('Env', () => {
@@ -43,6 +43,13 @@ describe('Env', () => {
     expect(process.env.JIHYUNLAB_ENV).toBe(envValue);
   });
 
+  test('cipher(): output', () => {
+    Env.encrypt(env, join(base, '.env_enc'));
+    Env.decrypt(join(base, '.env_enc'), join(base, '.env_dec'));
+
+    expect(readFileSync(env)).toStrictEqual(readFileSync(join(base, '.env_dec')));
+  });
+
   test('encrypt(): exception(empty)', () => {
     expect(() => {
       Env.encrypt('');
@@ -73,6 +80,12 @@ describe('Env', () => {
     }).toThrow(Error);
   });
 
+  test('encrypt() - exception(not .env)', () => {
+    expect(() => {
+      Env.encrypt(file);
+    }).toThrow(Error);
+  });
+
   test('decrypt(): exception(empty)', () => {
     expect(() => {
       Env.decrypt('');
@@ -100,6 +113,12 @@ describe('Env', () => {
   test('decrypt() - exception(name)', () => {
     expect(() => {
       Env.decrypt(join(base, 'env.test.ts'));
+    }).toThrow(Error);
+  });
+
+  test('decrypt() - exception(not .env)', () => {
+    expect(() => {
+      Env.decrypt(file);
     }).toThrow(Error);
   });
 });
