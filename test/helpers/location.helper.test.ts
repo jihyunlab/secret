@@ -9,20 +9,25 @@ describe('Location', () => {
 
   const dir = join(base, 'dir');
   const subDir = join(base, 'dir/sub-dir');
+  const subSubDir = join(base, 'dir/sub-dir/sub-sub-dir');
 
   const file = join(dir, 'file.txt');
   const subDirFile = join(subDir, 'sub_dir_file.txt');
+  const subSubDirFile = join(subSubDir, 'sub_sub_dir_file.txt');
 
   beforeAll(() => {
     mkdirSync(base, { recursive: true });
     mkdirSync(dir, { recursive: true });
     mkdirSync(subDir, { recursive: true });
+    mkdirSync(subSubDir, { recursive: true });
 
     writeFileSync(file, textString);
     writeFileSync(subDirFile, textString);
+    writeFileSync(subSubDirFile, textString);
   });
 
   afterAll(() => {
+    rmSync(subSubDir, { recursive: true, force: true });
     rmSync(subDir, { recursive: true, force: true });
     rmSync(dir, { recursive: true, force: true });
     rmSync(base, { recursive: true, force: true });
@@ -61,24 +66,49 @@ describe('Location', () => {
   test('searchDirectory()', () => {
     const result = Location.searchDirectory(dir);
 
-    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir)]);
-    expect(result.files).toStrictEqual([Location.toAbsolute(file), Location.toAbsolute(subDirFile)]);
+    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]);
+    expect(result.files).toStrictEqual([
+      Location.toAbsolute(file),
+      Location.toAbsolute(subSubDirFile),
+      Location.toAbsolute(subDirFile),
+    ]);
     expect(result.ignores).toStrictEqual([]);
   });
 
-  test('searchDirectory(): ignore dir', () => {
+  test('searchDirectory(): ignore sub dir', () => {
     const result = Location.searchDirectory(dir, Location.toBasename(subDir));
 
     expect(result.dirs).toStrictEqual([]);
     expect(result.files).toStrictEqual([Location.toAbsolute(file)]);
-    expect(result.ignores).toStrictEqual([Location.toAbsolute(subDir), Location.toAbsolute(subDirFile)]);
+    expect(result.ignores).toStrictEqual([
+      Location.toAbsolute(subDir),
+      Location.toAbsolute(subSubDir),
+      Location.toAbsolute(subSubDirFile),
+      Location.toAbsolute(subDirFile),
+    ]);
   });
 
-  test('searchDirectory(): ignore file', () => {
+  test('searchDirectory(): ignore sub dir file', () => {
     const result = Location.searchDirectory(dir, Location.toBasename(subDirFile));
 
-    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir)]);
-    expect(result.files).toStrictEqual([Location.toAbsolute(file)]);
+    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]);
+    expect(result.files).toStrictEqual([Location.toAbsolute(file), Location.toAbsolute(subSubDirFile)]);
     expect(result.ignores).toStrictEqual([Location.toAbsolute(subDirFile)]);
+  });
+
+  test('searchDirectory(): ignore sub sub dir', () => {
+    const result = Location.searchDirectory(dir, Location.toBasename(subSubDir));
+
+    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir)]);
+    expect(result.files).toStrictEqual([Location.toAbsolute(file), Location.toAbsolute(subDirFile)]);
+    expect(result.ignores).toStrictEqual([Location.toAbsolute(subSubDir), Location.toAbsolute(subSubDirFile)]);
+  });
+
+  test('searchDirectory(): ignore sub sub dir file', () => {
+    const result = Location.searchDirectory(dir, Location.toBasename(subSubDirFile));
+
+    expect(result.dirs).toStrictEqual([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]);
+    expect(result.files).toStrictEqual([Location.toAbsolute(file), Location.toAbsolute(subDirFile)]);
+    expect(result.ignores).toStrictEqual([Location.toAbsolute(subSubDirFile)]);
   });
 });
