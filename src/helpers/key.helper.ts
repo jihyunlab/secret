@@ -2,11 +2,17 @@ import { AEAD, HASH, Hash, Helper } from '@jihyunlab/crypto';
 
 export const Key = {
   load() {
-    return process.env.JIHYUNLAB_SECRET_KEY;
+    const key = process.env.JIHYUNLAB_SECRET_KEY;
+
+    if (!key || key.length === 0) {
+      return null;
+    }
+
+    return key;
   },
 
   generate(key?: string | Buffer) {
-    let loadedKey: string | Buffer | undefined;
+    let loadedKey: string | Buffer | null | undefined;
 
     if (key) {
       loadedKey = key;

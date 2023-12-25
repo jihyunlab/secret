@@ -9,6 +9,7 @@ describe('Env', () => {
   const base = 'test-env';
 
   const env = join(base, '.env');
+  const encEnv = join(base, '.env_enc');
   const dir = join(base, 'dir');
   const file = join(base, 'file');
 
@@ -27,10 +28,10 @@ describe('Env', () => {
   });
 
   beforeEach(() => {
-    writeFileSync(env, `${envKey}=${envValue}`);
-    writeFileSync(file, `${envKey}=${envValue}`);
+    writeFileSync(env, `${envKey}=${envValue}\n`);
+    writeFileSync(file, `${envKey}=${envValue}\n`);
 
-    Env.encrypt(env, env);
+    Env.encrypt(env, encEnv);
   });
 
   afterEach(() => {
@@ -39,15 +40,15 @@ describe('Env', () => {
   });
 
   test('load()', () => {
-    Env.load(config({ path: env }));
+    Env.load(config({ path: encEnv }));
     expect(process.env.JIHYUNLAB_ENV).toBe(envValue);
   });
 
   test('cipher(): output', () => {
-    Env.encrypt(env, join(base, '.env_enc'));
-    Env.decrypt(join(base, '.env_enc'), join(base, '.env_dec'));
+    Env.encrypt(env, join(base, '.env_enc_cipher'));
+    Env.decrypt(join(base, '.env_enc_cipher'), join(base, '.env_dec_cipher'));
 
-    expect(readFileSync(env)).toStrictEqual(readFileSync(join(base, '.env_dec')));
+    expect(readFileSync(env)).toStrictEqual(readFileSync(join(base, '.env_dec_cipher')));
   });
 
   test('encrypt(): exception(empty)', () => {
@@ -106,7 +107,7 @@ describe('Env', () => {
 
   test('decrypt(): exception(dir output)', () => {
     expect(() => {
-      Env.decrypt(env, dir);
+      Env.decrypt(encEnv, dir);
     }).toThrow(Error);
   });
 

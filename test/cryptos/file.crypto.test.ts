@@ -10,21 +10,28 @@ describe('File', () => {
 
   const base = 'test-file';
 
+  const dir = join(base, 'dir');
   const file = join(base, 'plain.txt');
+  const fileEnc = join(base, 'plain_enc.txt');
+
   const encryptedFile = join(base, 'encrypted.enc');
   const decryptedFile = join(base, 'decrypted.enc');
 
   beforeAll(() => {
     process.env.JIHYUNLAB_SECRET_KEY = keyString;
     mkdirSync(base, { recursive: true });
+    mkdirSync(dir, { recursive: true });
   });
 
   afterAll(() => {
+    rmSync(dir, { recursive: true, force: true });
     rmSync(base, { recursive: true, force: true });
   });
 
   beforeEach(() => {
     writeFileSync(file, textString);
+
+    File.encrypt(file, fileEnc);
   });
 
   afterEach(() => {
@@ -84,5 +91,53 @@ describe('File', () => {
     expect(encrypted).toStrictEqual(readFileSync(encryptedFile));
     expect(decrypted).toStrictEqual(readFileSync(decryptedFile));
     expect(readFileSync(file)).toStrictEqual(readFileSync(decryptedFile));
+  });
+
+  test('encrypt(): exception(empty)', () => {
+    expect(() => {
+      File.encrypt('');
+    }).toThrow(Error);
+  });
+
+  test('encrypt(): exception(not found)', () => {
+    expect(() => {
+      File.encrypt('wrong');
+    }).toThrow(Error);
+  });
+
+  test('encrypt(): exception(dir)', () => {
+    expect(() => {
+      File.encrypt('test');
+    }).toThrow(Error);
+  });
+
+  test('encrypt(): exception(dir output)', () => {
+    expect(() => {
+      File.encrypt(file, dir);
+    }).toThrow(Error);
+  });
+
+  test('decrypt(): exception(empty)', () => {
+    expect(() => {
+      File.decrypt('');
+    }).toThrow(Error);
+  });
+
+  test('decrypt(): exception(not found)', () => {
+    expect(() => {
+      File.decrypt('wrong');
+    }).toThrow(Error);
+  });
+
+  test('decrypt(): exception(dir)', () => {
+    expect(() => {
+      File.decrypt('test');
+    }).toThrow(Error);
+  });
+
+  test('decrypt(): exception(dir output)', () => {
+    expect(() => {
+      File.decrypt(fileEnc, dir);
+    }).toThrow(Error);
   });
 });
