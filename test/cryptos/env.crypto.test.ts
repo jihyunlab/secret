@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 describe('Env', () => {
+  const key = process.env.JIHYUNLAB_SECRET_KEY;
   const keyString = 'JihyunLab';
 
   const base = 'test-env';
@@ -23,6 +24,7 @@ describe('Env', () => {
   });
 
   afterAll(() => {
+    process.env.JIHYUNLAB_SECRET_KEY = key;
     rmSync(dir, { recursive: true, force: true });
     rmSync(base, { recursive: true, force: true });
   });
