@@ -22,15 +22,13 @@ export const Crypto = {
 
   decrypt: {
     string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
+      const info = Helper.cipher.info(AEAD.AES_256_GCM);
       const buffer = Buffer.from(string, inputEncoding ? inputEncoding : 'hex');
 
-      const info = Helper.cipher.info(AEAD.AES_256_GCM);
-      const ivLength = info.ivLength ? info.ivLength : 0;
-
       const decrypted = Aead.create(AEAD.AES_256_GCM, Key.generate(key)).decrypt.buffer(
-        buffer.subarray(ivLength, buffer.length - 16),
+        buffer.subarray(info.ivLength, buffer.length - 16),
         buffer.subarray(buffer.length - 16, buffer.length),
-        buffer.subarray(0, ivLength)
+        buffer.subarray(0, info.ivLength)
       );
 
       return decrypted.toString(outputEncoding ? outputEncoding : 'utf8');
@@ -38,12 +36,11 @@ export const Crypto = {
 
     buffer: (buffer: Buffer, key?: string | Buffer) => {
       const info = Helper.cipher.info(AEAD.AES_256_GCM);
-      const ivLength = info.ivLength ? info.ivLength : 0;
 
       return Aead.create(AEAD.AES_256_GCM, Key.generate(key)).decrypt.buffer(
-        buffer.subarray(ivLength, buffer.length - 16),
+        buffer.subarray(info.ivLength, buffer.length - 16),
         buffer.subarray(buffer.length - 16, buffer.length),
-        buffer.subarray(0, ivLength)
+        buffer.subarray(0, info.ivLength)
       );
     },
   },
