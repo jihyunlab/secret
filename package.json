@@ -26,7 +26,7 @@
     "env"
   ],
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "dependencies": {
     "@jihyunlab/crypto": "^1.0.5",
