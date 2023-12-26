@@ -13,8 +13,8 @@
     "build": "tsc --build",
     "start": "tsc --build && node dist/src/index.js",
     "clean": "tsc --build --clean",
-    "test": "jest",
-    "test:coverage": "jest --coverage --coverageReporters=cobertura"
+    "lint": "eslint src/**/*.{ts,tsx,js,jsx} && eslint test/**/*.{ts,tsx,js,jsx}",
+    "test": "jest --coverage --coverageReporters=cobertura"
   },
   "keywords": [
     "secret",
