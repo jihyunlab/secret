@@ -4,7 +4,8 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 describe('Env', () => {
-  const key = process.env.JIHYUNLAB_SECRET_KEY;
+  const processEnv = process.env;
+
   const keyString = 'JihyunLab';
 
   const base = 'test-env';
@@ -18,18 +19,21 @@ describe('Env', () => {
   const envValue = 'WELCOME_TO_JIHYUNLAB';
 
   beforeAll(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = keyString;
     mkdirSync(base, { recursive: true });
     mkdirSync(dir, { recursive: true });
   });
 
   afterAll(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = key;
     rmSync(dir, { recursive: true, force: true });
     rmSync(base, { recursive: true, force: true });
   });
 
   beforeEach(() => {
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: keyString,
+    };
+
     writeFileSync(env, `${envKey}=${envValue}\n`);
     writeFileSync(file, `${envKey}=${envValue}\n`);
 
@@ -37,6 +41,8 @@ describe('Env', () => {
   });
 
   afterEach(() => {
+    process.env = processEnv;
+
     rmSync(env, { force: true });
     rmSync(file, { force: true });
   });

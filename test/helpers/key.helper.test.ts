@@ -1,14 +1,22 @@
 import { Key } from '../../src/helpers/key.helper';
 
 describe('Key', () => {
-  test('load(): exception(not found)', () => {
-    const key = process.env.JIHYUNLAB_SECRET_KEY;
+  const processEnv = process.env;
 
+  beforeEach(() => {
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: '',
+    };
+  });
+
+  afterEach(() => {
+    process.env = processEnv;
+  });
+
+  test('load(): exception(not found)', () => {
     expect(() => {
-      process.env.JIHYUNLAB_SECRET_KEY = '';
       Key.generate();
     }).toThrow(Error);
-
-    process.env.JIHYUNLAB_SECRET_KEY = key;
   });
 });

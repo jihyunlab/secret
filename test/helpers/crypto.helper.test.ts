@@ -1,6 +1,8 @@
 import { Crypto } from '../../src/index';
 
 describe('Crypto', () => {
+  const processEnv = process.env;
+
   const keyString = 'JihyunLab';
   const keyBuffer = Buffer.from(keyString, 'utf8');
 
@@ -8,7 +10,14 @@ describe('Crypto', () => {
   const textBuffer = Buffer.from(textString, 'utf8');
 
   beforeEach(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = keyString;
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: keyString,
+    };
+  });
+
+  afterEach(() => {
+    process.env = processEnv;
   });
 
   test('environment key(string)', () => {

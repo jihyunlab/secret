@@ -3,6 +3,8 @@ import { join } from 'path';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 
 describe('File', () => {
+  const processEnv = process.env;
+
   const keyString = 'JihyunLab';
   const keyBuffer = Buffer.from(keyString, 'utf8');
 
@@ -18,7 +20,6 @@ describe('File', () => {
   const decryptedFile = join(base, 'decrypted.enc');
 
   beforeAll(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = keyString;
     mkdirSync(base, { recursive: true });
     mkdirSync(dir, { recursive: true });
   });
@@ -29,12 +30,19 @@ describe('File', () => {
   });
 
   beforeEach(() => {
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: keyString,
+    };
+
     writeFileSync(file, textString);
 
     File.encrypt(file, fileEnc);
   });
 
   afterEach(() => {
+    process.env = processEnv;
+
     rmSync(file, { force: true });
     rmSync(encryptedFile, { force: true });
     rmSync(decryptedFile, { force: true });

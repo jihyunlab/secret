@@ -1,13 +1,22 @@
 import { Text } from '../../src/index';
 
 describe('Text', () => {
+  const processEnv = process.env;
+
   const keyString = 'JihyunLab';
   const keyBuffer = Buffer.from(keyString, 'utf8');
 
   const textString = 'Welcome to JihyunLab.';
 
   beforeEach(() => {
-    process.env.JIHYUNLAB_SECRET_KEY = keyString;
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: keyString,
+    };
+  });
+
+  afterEach(() => {
+    process.env = processEnv;
   });
 
   test('environment key()', () => {
