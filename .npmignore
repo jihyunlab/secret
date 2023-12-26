@@ -1,6 +1,5 @@
 *
 
-!/dist/bin/**/*
 !/dist/src/**/*
 
 !/package.json

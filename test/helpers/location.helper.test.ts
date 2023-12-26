@@ -1,4 +1,4 @@
-import { Location } from '../../src/helpers/location.helper';
+import { LocationHelper } from '../../src/index';
 import { join } from 'path';
 import { mkdirSync, rmSync, writeFileSync } from 'fs';
 
@@ -34,115 +34,127 @@ describe('Location', () => {
   });
 
   test('toRelative()', () => {
-    const location = Location.toRelative(dir);
+    const location = LocationHelper.toRelative(dir);
     expect(location).toBe(dir);
   });
 
   test('isDirectory(): dir', () => {
-    const isDirectory = Location.isDirectory(dir);
+    const isDirectory = LocationHelper.isDirectory(dir);
     expect(isDirectory).toBe(true);
   });
 
   test('isDirectory(): file', () => {
-    const isDirectory = Location.isDirectory(file);
+    const isDirectory = LocationHelper.isDirectory(file);
     expect(isDirectory).toBe(false);
   });
 
   test('isDirectory(): not exist', () => {
-    const isDirectory = Location.isDirectory('temp');
+    const isDirectory = LocationHelper.isDirectory('temp');
     expect(isDirectory).toBe(undefined);
   });
 
   test('toDirectory(): dir', () => {
-    const directory = Location.toDirectory(dir);
-    expect(directory).toBe(Location.toAbsolute(dir));
+    const directory = LocationHelper.toDirectory(dir);
+    expect(directory).toBe(LocationHelper.toAbsolute(dir));
   });
 
   test('toDirectory(): file', () => {
-    const directory = Location.toDirectory(file, true);
-    expect(directory).toBe(Location.toAbsolute(dir));
+    const directory = LocationHelper.toDirectory(file, true);
+    expect(directory).toBe(LocationHelper.toAbsolute(dir));
   });
 
   test('searchDirectory()', () => {
-    const result = Location.searchDirectory(dir);
+    const result = LocationHelper.searchDirectory(dir);
 
-    expect(result.dirs).toEqual(expect.arrayContaining([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]));
+    expect(result.dirs).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
+    );
     expect(result.files).toEqual(
       expect.arrayContaining([
-        Location.toAbsolute(file),
-        Location.toAbsolute(subSubDirFile),
-        Location.toAbsolute(subDirFile),
+        LocationHelper.toAbsolute(file),
+        LocationHelper.toAbsolute(subSubDirFile),
+        LocationHelper.toAbsolute(subDirFile),
       ])
     );
     expect(result.ignores).toEqual(expect.arrayContaining([]));
   });
 
   test('searchDirectory(): ignore dir', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(dir));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(dir));
 
     expect(result.dirs).toEqual(expect.arrayContaining([]));
     expect(result.files).toEqual(expect.arrayContaining([]));
     expect(result.ignores).toEqual(
       expect.arrayContaining([
-        Location.toAbsolute(file),
-        Location.toAbsolute(subDir),
-        Location.toAbsolute(subSubDir),
-        Location.toAbsolute(subSubDirFile),
-        Location.toAbsolute(subDirFile),
+        LocationHelper.toAbsolute(file),
+        LocationHelper.toAbsolute(subDir),
+        LocationHelper.toAbsolute(subSubDir),
+        LocationHelper.toAbsolute(subSubDirFile),
+        LocationHelper.toAbsolute(subDirFile),
       ])
     );
   });
 
   test('searchDirectory(): ignore file', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(file));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(file));
 
-    expect(result.dirs).toEqual(expect.arrayContaining([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]));
-    expect(result.files).toEqual(
-      expect.arrayContaining([Location.toAbsolute(subSubDirFile), Location.toAbsolute(subDirFile)])
+    expect(result.dirs).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
     );
-    expect(result.ignores).toEqual(expect.arrayContaining([Location.toAbsolute(file)]));
+    expect(result.files).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(subSubDirFile), LocationHelper.toAbsolute(subDirFile)])
+    );
+    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(file)]));
   });
 
   test('searchDirectory(): ignore sub dir', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(subDir));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subDir));
 
     expect(result.dirs).toEqual(expect.arrayContaining([]));
-    expect(result.files).toEqual(expect.arrayContaining([Location.toAbsolute(file)]));
+    expect(result.files).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(file)]));
     expect(result.ignores).toEqual(
       expect.arrayContaining([
-        Location.toAbsolute(subDir),
-        Location.toAbsolute(subSubDir),
-        Location.toAbsolute(subSubDirFile),
-        Location.toAbsolute(subDirFile),
+        LocationHelper.toAbsolute(subDir),
+        LocationHelper.toAbsolute(subSubDir),
+        LocationHelper.toAbsolute(subSubDirFile),
+        LocationHelper.toAbsolute(subDirFile),
       ])
     );
   });
 
   test('searchDirectory(): ignore sub dir file', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(subDirFile));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subDirFile));
 
-    expect(result.dirs).toEqual(expect.arrayContaining([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]));
-    expect(result.files).toEqual(
-      expect.arrayContaining([Location.toAbsolute(file), Location.toAbsolute(subSubDirFile)])
+    expect(result.dirs).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
     );
-    expect(result.ignores).toEqual(expect.arrayContaining([Location.toAbsolute(subDirFile)]));
+    expect(result.files).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subSubDirFile)])
+    );
+    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subDirFile)]));
   });
 
   test('searchDirectory(): ignore sub sub dir', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(subSubDir));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subSubDir));
 
-    expect(result.dirs).toEqual(expect.arrayContaining([Location.toAbsolute(subDir)]));
-    expect(result.files).toEqual(expect.arrayContaining([Location.toAbsolute(file), Location.toAbsolute(subDirFile)]));
+    expect(result.dirs).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subDir)]));
+    expect(result.files).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subDirFile)])
+    );
     expect(result.ignores).toEqual(
-      expect.arrayContaining([Location.toAbsolute(subSubDir), Location.toAbsolute(subSubDirFile)])
+      expect.arrayContaining([LocationHelper.toAbsolute(subSubDir), LocationHelper.toAbsolute(subSubDirFile)])
     );
   });
 
   test('searchDirectory(): ignore sub sub dir file', () => {
-    const result = Location.searchDirectory(dir, Location.toBasename(subSubDirFile));
+    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subSubDirFile));
 
-    expect(result.dirs).toEqual(expect.arrayContaining([Location.toAbsolute(subDir), Location.toAbsolute(subSubDir)]));
-    expect(result.files).toEqual(expect.arrayContaining([Location.toAbsolute(file), Location.toAbsolute(subDirFile)]));
-    expect(result.ignores).toEqual(expect.arrayContaining([Location.toAbsolute(subSubDirFile)]));
+    expect(result.dirs).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
+    );
+    expect(result.files).toEqual(
+      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subDirFile)])
+    );
+    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subSubDirFile)]));
   });
 });
