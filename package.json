@@ -1,6 +1,6 @@
 {
   "name": "@jihyunlab/secret",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "JihyunLab Secret.",
   "license": "MIT",
   "author": "JihyunLab <info@jihyunlab.com> (https://jihyunlab.com)",
@@ -29,7 +29,7 @@
     "node": ">=16"
   },
   "dependencies": {
-    "@jihyunlab/crypto": "^1.0.5",
+    "@jihyunlab/crypto": "^1.0.6",
     "dotenv": "^16.3.1",
     "ignore": "^5.3.0"
   },
