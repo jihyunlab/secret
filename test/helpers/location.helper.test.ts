@@ -8,8 +8,8 @@ describe('Location', () => {
   const textString = 'Welcome to JihyunLab.';
 
   const dir = join(base, 'dir');
-  const subDir = join(base, 'dir/sub-dir');
-  const subSubDir = join(base, 'dir/sub-dir/sub-sub-dir');
+  const subDir = join(dir, 'sub-dir');
+  const subSubDir = join(subDir, 'sub-sub-dir');
 
   const file = join(dir, 'file.txt');
   const subDirFile = join(subDir, 'sub_dir_file.txt');
