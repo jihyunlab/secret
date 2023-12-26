@@ -15,12 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           cache: 'npm'
 
-      - name: Config
+      - name: Install
         run: npm ci
 
       - name: Lint
