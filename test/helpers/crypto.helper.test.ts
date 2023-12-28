@@ -20,6 +20,30 @@ describe('Crypto', () => {
     process.env = processEnv;
   });
 
+  test('environment key(binary)', () => {
+    const encrypted = Crypto.encrypt.binary(textString);
+    const decrypted = Crypto.decrypt.binary(encrypted);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('environment key(hex)', () => {
+    const encrypted = Crypto.encrypt.hex(textString);
+    const decrypted = Crypto.decrypt.hex(encrypted);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('environment key(base64)', () => {
+    const encrypted = Crypto.encrypt.base64(textString);
+    const decrypted = Crypto.decrypt.base64(encrypted);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('environment key(uint8Array)', () => {
+    const encrypted = Crypto.encrypt.uint8Array(textBuffer);
+    const decrypted = Crypto.decrypt.uint8Array(encrypted);
+    expect(decrypted).toStrictEqual(textBuffer);
+  });
+
   test('environment key(string)', () => {
     const encrypted = Crypto.encrypt.string(textString);
     const decrypted = Crypto.decrypt.string(encrypted);
@@ -45,6 +69,18 @@ describe('Crypto', () => {
     encrypted = Crypto.encrypt.string(textString, 'utf8', 'binary');
     decrypted = Crypto.decrypt.string(encrypted, 'binary', 'utf8');
     expect(decrypted).toBe(textString);
+
+    encrypted = Crypto.encrypt.binary(textString, 'utf8');
+    decrypted = Crypto.decrypt.binary(encrypted, 'utf8');
+    expect(decrypted).toBe(textString);
+
+    encrypted = Crypto.encrypt.hex(textString, 'utf8');
+    decrypted = Crypto.decrypt.hex(encrypted, 'utf8');
+    expect(decrypted).toBe(textString);
+
+    encrypted = Crypto.encrypt.base64(textString, 'utf8');
+    decrypted = Crypto.decrypt.base64(encrypted, 'utf8');
+    expect(decrypted).toBe(textString);
   });
 
   test('environment key(buffer)', () => {
@@ -66,6 +102,30 @@ describe('Crypto', () => {
     bufferEncrypted = Crypto.encrypt.buffer(textBuffer);
     stringDecrypted = Crypto.decrypt.string(bufferEncrypted.toString('hex'));
     expect(stringDecrypted).toBe(textString);
+  });
+
+  test('user key(binary)', () => {
+    const encrypted = Crypto.encrypt.binary(textString, 'utf8', keyString);
+    const decrypted = Crypto.decrypt.binary(encrypted, 'utf8', keyString);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('user key(hex)', () => {
+    const encrypted = Crypto.encrypt.hex(textString, 'utf8', keyString);
+    const decrypted = Crypto.decrypt.hex(encrypted, 'utf8', keyString);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('user key(base64)', () => {
+    const encrypted = Crypto.encrypt.base64(textString, 'utf8', keyString);
+    const decrypted = Crypto.decrypt.base64(encrypted, 'utf8', keyString);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('user key(uint8Array)', () => {
+    const encrypted = Crypto.encrypt.uint8Array(textBuffer, keyString);
+    const decrypted = Crypto.decrypt.uint8Array(encrypted, keyString);
+    expect(decrypted).toStrictEqual(textBuffer);
   });
 
   test('user key(string)', () => {

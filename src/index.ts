@@ -42,6 +42,22 @@ export const Env = {
 
 export const Crypto = {
   encrypt: {
+    binary: (text: string, inputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.encrypt.string(text, inputEncoding, 'binary', key);
+    },
+
+    hex: (text: string, inputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.encrypt.string(text, inputEncoding, 'hex', key);
+    },
+
+    base64: (text: string, inputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.encrypt.string(text, inputEncoding, 'base64', key);
+    },
+
+    uint8Array: (buffer: Buffer, key?: string | Buffer) => {
+      return new Uint8Array(CryptoHelper.encrypt.buffer(buffer, key));
+    },
+
     string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
       return CryptoHelper.encrypt.string(string, inputEncoding, outputEncoding, key);
     },
@@ -52,6 +68,22 @@ export const Crypto = {
   },
 
   decrypt: {
+    binary: (text: string, outputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.string(text, 'binary', outputEncoding, key);
+    },
+
+    hex: (text: string, outputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.string(text, 'hex', outputEncoding, key);
+    },
+
+    base64: (text: string, outputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.string(text, 'base64', outputEncoding, key);
+    },
+
+    uint8Array: (uint8Array: Uint8Array, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.buffer(Buffer.from(uint8Array), key);
+    },
+
     string: (string: string, inputEncoding?: Encoding, outputEncoding?: BufferEncoding, key?: string | Buffer) => {
       return CryptoHelper.decrypt.string(string, inputEncoding, outputEncoding, key);
     },
