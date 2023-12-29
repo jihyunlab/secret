@@ -1,6 +1,6 @@
 {
   "name": "@jihyunlab/secret",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "JihyunLab Secret.",
   "license": "MIT",
   "author": "JihyunLab <info@jihyunlab.com> (https://jihyunlab.com)",
@@ -34,8 +34,8 @@
     "ignore": "^5.3.0"
   },
   "devDependencies": {
-    "@jihyunlab/eslint-config": "^1.1.1",
-    "@jihyunlab/prettier-config": "^1.1.1",
+    "@jihyunlab/eslint-config": "^1.1.2",
+    "@jihyunlab/prettier-config": "^1.1.2",
     "@types/jest": "^29.5.8",
     "@types/node": "^20.9.0",
     "jest": "^29.7.0",

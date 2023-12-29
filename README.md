@@ -25,56 +25,6 @@ If you register JIHYUNLAB_SECRET_KEY in a system or user environment variable, t
 export JIHYUNLAB_SECRET_KEY=YourKey
 ```
 
-## Encryption
-
-You can easily use the symmetric key encryption function of [@jihyunlab/crypto](https://www.npmjs.com/package/@jihyunlab/crypto).
-
-```javascript
-const encrypted = Crypto.encrypt.hex('string');
-const decrypted = Crypto.decrypt.hex(encrypted);
-```
-
-You can implement cryptographic functions using buffers.
-
-```javascript
-const encrypted = Crypto.encrypt.buffer(Buffer.from('string'));
-const decrypted = Crypto.decrypt.buffer(encrypted);
-```
-
-You can use predefined functions to select the output type of the encrypted text and the input type of the text to be decrypted.
-
-```javascript
-Crypto.encrypt.hex('string');
-Crypto.decrypt.hex(encrypted);
-
-Crypto.encrypt.binary('string');
-Crypto.decrypt.binary(encrypted);
-
-Crypto.encrypt.base64('string');
-Crypto.decrypt.base64(encrypted);
-
-Crypto.encrypt.buffer(Buffer.from('string'));
-Crypto.decrypt.buffer(encrypted);
-
-Crypto.encrypt.uint8Array(Buffer.from('string'));
-Crypto.decrypt.uint8Array(encrypted);
-```
-
-You can choose the input and output type of text.\
-Input and output text types must be types defined in Node.js.
-
-```javascript
-const encrypted = Crypto.encrypt.string('string', 'utf8', 'base64url');
-const decrypted = Crypto.decrypt.string(encrypted, 'base64url', 'utf8');
-```
-
-Instead of using an encryption key from an environment variable, you can input the key directly.
-
-```javascript
-const encrypted = Crypto.encrypt.hex('string', 'utf8', 'your key');
-const decrypted = Crypto.decrypt.hex(encrypted, 'utf8', 'your key');
-```
-
 ## Text encryption
 
 Text encryption encrypts the input text and returns an encrypted hex string.
@@ -129,6 +79,58 @@ writeFileSync('file_enc', Buffer.from(encrypted, 'hex'));
 
 const decrypted = File.decrypt('file_enc');
 decrypted.toString('utf8');
+```
+
+## @jihyunlab/crypto
+
+You can easily use the encryption function of [@jihyunlab/crypto](https://www.npmjs.com/package/@jihyunlab/crypto).
+
+```javascript
+import { Crypto } from '@jihyunlab/secret';
+
+const encrypted = Crypto.encrypt.hex('string');
+const decrypted = Crypto.decrypt.hex(encrypted);
+```
+
+You can implement cryptographic functions using buffers.
+
+```javascript
+const encrypted = Crypto.encrypt.buffer(Buffer.from('string'));
+const decrypted = Crypto.decrypt.buffer(encrypted);
+```
+
+You can use predefined functions to select the output type of the encrypted text and the input type of the text to be decrypted.
+
+```javascript
+Crypto.encrypt.hex('string');
+Crypto.decrypt.hex(encrypted);
+
+Crypto.encrypt.binary('string');
+Crypto.decrypt.binary(encrypted);
+
+Crypto.encrypt.base64('string');
+Crypto.decrypt.base64(encrypted);
+
+Crypto.encrypt.buffer(Buffer.from('string'));
+Crypto.decrypt.buffer(encrypted);
+
+Crypto.encrypt.uint8Array(Buffer.from('string'));
+Crypto.decrypt.uint8Array(encrypted);
+```
+
+You can choose the input and output type of text.\
+Input and output text types must be types defined in Node.js.
+
+```javascript
+const encrypted = Crypto.encrypt.string('string', 'utf8', 'base64url');
+const decrypted = Crypto.decrypt.string(encrypted, 'base64url', 'utf8');
+```
+
+Instead of using an encryption key from an environment variable, you can input the key directly.
+
+```javascript
+const encrypted = Crypto.encrypt.hex('string', 'utf8', 'your key');
+const decrypted = Crypto.decrypt.hex(encrypted, 'utf8', 'your key');
 ```
 
 ## Encrypted .env
