@@ -111,6 +111,9 @@ Crypto.decrypt.binary(encrypted);
 Crypto.encrypt.base64('string');
 Crypto.decrypt.base64(encrypted);
 
+Crypto.encrypt.base64url('string');
+Crypto.decrypt.base64url(encrypted);
+
 Crypto.encrypt.buffer(Buffer.from('string'));
 Crypto.decrypt.buffer(encrypted);
 

@@ -54,6 +54,10 @@ export const Crypto = {
       return CryptoHelper.encrypt.string(text, inputEncoding, 'base64', key);
     },
 
+    base64url: (text: string, inputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.encrypt.string(text, inputEncoding, 'base64url', key);
+    },
+
     uint8Array: (buffer: Buffer, key?: string | Buffer) => {
       return new Uint8Array(CryptoHelper.encrypt.buffer(buffer, key));
     },
@@ -78,6 +82,10 @@ export const Crypto = {
 
     base64: (text: string, outputEncoding?: Encoding, key?: string | Buffer) => {
       return CryptoHelper.decrypt.string(text, 'base64', outputEncoding, key);
+    },
+
+    base64url: (text: string, outputEncoding?: Encoding, key?: string | Buffer) => {
+      return CryptoHelper.decrypt.string(text, 'base64url', outputEncoding, key);
     },
 
     uint8Array: (uint8Array: Uint8Array, key?: string | Buffer) => {

@@ -38,6 +38,12 @@ describe('Crypto', () => {
     expect(decrypted).toBe(textString);
   });
 
+  test('environment key(base64url)', () => {
+    const encrypted = Crypto.encrypt.base64url(textString);
+    const decrypted = Crypto.decrypt.base64url(encrypted);
+    expect(decrypted).toBe(textString);
+  });
+
   test('environment key(uint8Array)', () => {
     const encrypted = Crypto.encrypt.uint8Array(textBuffer);
     const decrypted = Crypto.decrypt.uint8Array(encrypted);
@@ -80,6 +86,9 @@ describe('Crypto', () => {
 
     encrypted = Crypto.encrypt.base64(textString, 'utf8');
     decrypted = Crypto.decrypt.base64(encrypted, 'utf8');
+
+    encrypted = Crypto.encrypt.base64url(textString, 'utf8');
+    decrypted = Crypto.decrypt.base64url(encrypted, 'utf8');
     expect(decrypted).toBe(textString);
   });
 
@@ -119,6 +128,12 @@ describe('Crypto', () => {
   test('user key(base64)', () => {
     const encrypted = Crypto.encrypt.base64(textString, 'utf8', keyString);
     const decrypted = Crypto.decrypt.base64(encrypted, 'utf8', keyString);
+    expect(decrypted).toBe(textString);
+  });
+
+  test('user key(base64url)', () => {
+    const encrypted = Crypto.encrypt.base64url(textString, 'utf8', keyString);
+    const decrypted = Crypto.decrypt.base64url(encrypted, 'utf8', keyString);
     expect(decrypted).toBe(textString);
   });
 
