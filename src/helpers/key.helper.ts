@@ -1,4 +1,4 @@
-import { AEAD, HASH, Hash, Helper } from '@jihyunlab/crypto';
+import { AEAD, HASH, Hash, Helper, PBKDF } from '@jihyunlab/crypto';
 
 export const Key = {
   load() {
@@ -11,7 +11,7 @@ export const Key = {
     return key;
   },
 
-  generate(key?: string | Buffer) {
+  generate(key?: string | Buffer, salt: string | Buffer = '', hash: HASH = HASH.SHA512) {
     let loadedKey: string | Buffer | null | undefined;
 
     if (key) {
@@ -28,8 +28,11 @@ export const Key = {
 
     return Helper.key.generate(
       AEAD.AES_256_GCM,
-      Hash.create(HASH.SHA512).update(loadedKey).hex(),
-      Hash.create(HASH.SHA512).update('').hex()
+      Hash.create(hash).update(loadedKey).hex(),
+      Hash.create(hash).update(salt).hex(),
+      PBKDF.PBKDF2,
+      1024,
+      hash
     );
   },
 };

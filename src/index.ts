@@ -1,6 +1,7 @@
 import { Text as TextCrypto } from './cryptos/text.crypto';
 import { File as FileCrypto } from './cryptos/file.crypto';
 import { Env as EnvCrypto } from './cryptos/env.crypto';
+import { Message as SecureMessage } from './secures/message.secure';
 import { Crypto as CryptoHelper } from './helpers/crypto.helper';
 import { Location as LocationHelper } from './helpers/location.helper';
 import { Encoding } from 'crypto';
@@ -98,6 +99,18 @@ export const Crypto = {
 
     buffer: (buffer: Buffer, key?: string | Buffer) => {
       return CryptoHelper.decrypt.buffer(buffer, key);
+    },
+  },
+};
+
+export const Secure = {
+  message: {
+    encode: (message: Buffer, key?: string | Buffer) => {
+      return SecureMessage.encode(message, key);
+    },
+
+    decode: (message: string, key?: string | Buffer) => {
+      return SecureMessage.decode(message, key);
     },
   },
 };
