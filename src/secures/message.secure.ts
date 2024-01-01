@@ -8,13 +8,14 @@ import {
   NotSupportedException,
   SignatureException,
 } from '../helpers/exception.helper';
-import { randomBytes } from 'crypto';
+import { randomUUID } from 'crypto';
 
 const json = {
   // JLSM Header: JWT(RFC 7519) Header
   header: {
     typ: 'JLSM',
     alg: 'ES256',
+    kid: '',
     enc: 'A256GCM',
   },
   // JLSM Payload: JWT(RFC 7519) Payload
@@ -24,8 +25,8 @@ const json = {
     exp: 0,
     jti: '',
   },
-  // JLSM Keys: JWK(RFC 7517) Keys
-  keys: [],
+  // JLSM Key: JWK(RFC 7517) Key
+  key: { keys: [] },
 
   // JLSM Encrypted Data: Protected by JLSE(JihyunLab Secure Encryption)
 
@@ -34,7 +35,7 @@ const json = {
   /*
   BASE64URL(UTF8(JLSM Header))
   || '.' || BASE64URL(UTF8(JLSM Payload))
-  || '.' || BASE64URL(UTF8(JLSM Keys))
+  || '.' || BASE64URL(UTF8(JLSM Key))
   || '.' || BASE64URL(UTF8(JLSM Encrypted Data))
   || '.' || BASE64URL(UTF8(JLSM Signature))
   */
@@ -52,19 +53,19 @@ export const Message = {
       hashLen = 256;
     }
 
+    jlsm['header']['kid'] = randomUUID();
+
     // JLSM Header
-    const header = Buffer.from(JSON.stringify(jlsm['header'])).toString('base64url');
+    const jlsmHeader = Buffer.from(JSON.stringify(jlsm['header'])).toString('base64url');
 
     // JLSM Payload
     const current = Date.now();
 
     jlsm['payload']['iat'] = Math.floor(current / 1000);
     jlsm['payload']['exp'] = jlsm['payload']['iat'] + 3 * 60;
-    jlsm['payload']['jti'] = Hash.create(hash)
-      .update(Buffer.concat([Buffer.from(current.toString()), randomBytes(Math.floor(hashLen / 8))]))
-      .hex();
+    jlsm['payload']['jti'] = randomUUID();
 
-    const payload = Buffer.from(JSON.stringify(jlsm['payload'])).toString('base64url');
+    const jlsmPayload = Buffer.from(JSON.stringify(jlsm['payload'])).toString('base64url');
 
     // Load Key
     let loadedKey: string | Buffer | null;
@@ -85,7 +86,7 @@ export const Message = {
       .update(Buffer.from(loadedKey) || '')
       .buffer();
 
-    // JLSM Keys
+    // JLSM Key
     let keyPair = Helper.keyPair.generate.p256();
 
     if (jlsm['header']['alg'] === 'ES256') {
@@ -93,12 +94,15 @@ export const Message = {
     }
 
     const publicKey = keyPair.publicKey.export({ format: 'jwk' });
-    jlsm['keys'].push(publicKey);
+    publicKey['kid'] = jlsm['header']['kid'];
+    publicKey['use'] = 'sig';
 
-    const keys = Buffer.from(JSON.stringify(jlsm['keys'])).toString('base64url');
+    jlsm['key']['keys'].push(publicKey);
+
+    const jlsmKey = Buffer.from(JSON.stringify(jlsm['key'])).toString('base64url');
 
     // JLSM Encryption
-    let buffer = Buffer.from(`${header}.${payload}.${keys}`, 'ascii');
+    let buffer = Buffer.from(`${jlsmHeader}.${jlsmPayload}.${jlsmKey}`, 'ascii');
     let hashedBuffer = Hash.create(hash).update(buffer).buffer();
 
     const secret = Key.generate(
@@ -109,10 +113,10 @@ export const Message = {
       hash
     );
 
-    const encryptedData = Crypto.encrypt.buffer(message, secret).toString('base64url');
+    const jlsmEncryptedData = Crypto.encrypt.buffer(message, secret).toString('base64url');
 
     // JLSM Signature
-    buffer = Buffer.from(`${header}.${payload}.${keys}.${encryptedData}`, 'ascii');
+    buffer = Buffer.from(`${jlsmHeader}.${jlsmPayload}.${jlsmKey}.${jlsmEncryptedData}`, 'ascii');
     hashedBuffer = Hash.create(hash).update(buffer).buffer();
 
     const signatureTo = Helper.key.pbkdf2(
@@ -126,9 +130,9 @@ export const Message = {
     );
 
     const signer = Asymmetric.create.signer({ key: keyPair.privateKey, dsaEncoding: 'ieee-p1363' });
-    const signature = signer.sign(signatureTo).toString('base64url');
+    const jlsmSignature = signer.sign(signatureTo).toString('base64url');
 
-    return `${header}.${payload}.${keys}.${encryptedData}.${signature}`;
+    return `${jlsmHeader}.${jlsmPayload}.${jlsmKey}.${jlsmEncryptedData}.${jlsmSignature}`;
   },
 
   decode: (message: string, key?: string | Buffer) => {
@@ -142,14 +146,14 @@ export const Message = {
       throw new IllegalArgumentException('the structure of the message is incorrect.');
     }
 
-    const header = token[0];
-    const payload = token[1];
-    const keys = token[2];
-    const encryptedData = token[3];
-    const signature = token[4];
+    const jlsmHeader = token[0];
+    const jlsmPayload = token[1];
+    const jlsmKey = token[2];
+    const jlsmEncryptedData = token[3];
+    const jlsmSignature = token[4];
 
     // JLSM Header
-    const jsonHeader = JSON.parse(Buffer.from(header, 'base64url').toString());
+    const jsonHeader = JSON.parse(Buffer.from(jlsmHeader, 'base64url').toString());
 
     let hash = HASH.SHA256;
     let hashLen = 256;
@@ -169,8 +173,12 @@ export const Message = {
       throw new NotSupportedException(`${jsonHeader['enc']} is an unsupported encryption algorithm.`);
     }
 
+    if (!jsonHeader['kid'] || jsonHeader['kid'].length === 0) {
+      throw new NotFoundException('kid not found.');
+    }
+
     // JLSM Payload
-    const jsonPayload = JSON.parse(Buffer.from(payload, 'base64url').toString());
+    const jsonPayload = JSON.parse(Buffer.from(jlsmPayload, 'base64url').toString());
     const current = Date.now();
 
     if (Math.floor(current / 1000) > jsonPayload['exp']) {
@@ -200,17 +208,21 @@ export const Message = {
       .update(Buffer.from(loadedKey) || '')
       .buffer();
 
-    // JLSM Keys
-    const jsonKeys = JSON.parse(Buffer.from(keys, 'base64url').toString());
+    // JLSM Key
+    const jsonKey = JSON.parse(Buffer.from(jlsmKey, 'base64url').toString());
 
-    if (!jsonKeys || jsonKeys.length === 0) {
-      throw new NotFoundException('keys not found.');
+    if (!jsonKey || !jsonKey['keys'] || jsonKey['keys'].length === 0) {
+      throw new NotFoundException('key not found.');
     }
 
-    const publicKey = Helper.keyPair.generate.publicKey({ key: jsonKeys[0], format: 'jwk' });
+    if (jsonKey['keys'][0]['kid'] !== jsonHeader['kid']) {
+      throw new NotFoundException('a key matching the kid could not be found.');
+    }
+
+    const publicKey = Helper.keyPair.generate.publicKey({ key: jsonKey['keys'][0], format: 'jwk' });
 
     // JLSM Signature
-    let buffer = Buffer.from(`${header}.${payload}.${keys}.${encryptedData}`, 'ascii');
+    let buffer = Buffer.from(`${jlsmHeader}.${jlsmPayload}.${jlsmKey}.${jlsmEncryptedData}`, 'ascii');
     let hashedBuffer = Hash.create(hash).update(buffer).buffer();
 
     const signatureTo = Helper.key.pbkdf2(
@@ -224,14 +236,14 @@ export const Message = {
     );
 
     const verifier = Asymmetric.create.verifier({ key: publicKey, dsaEncoding: 'ieee-p1363' });
-    const verified = verifier.verify(signatureTo, Buffer.from(signature, 'base64url'));
+    const verified = verifier.verify(signatureTo, Buffer.from(jlsmSignature, 'base64url'));
 
     if (!verified) {
       throw new SignatureException('signature verification failed.');
     }
 
     // JLSM Decryption
-    buffer = Buffer.from(`${header}.${payload}.${keys}`, 'ascii');
+    buffer = Buffer.from(`${jlsmHeader}.${jlsmPayload}.${jlsmKey}`, 'ascii');
     hashedBuffer = Hash.create(hash).update(buffer).buffer();
 
     const secret = Key.generate(
@@ -242,6 +254,6 @@ export const Message = {
       hash
     );
 
-    return Crypto.decrypt.buffer(Buffer.from(encryptedData, 'base64url'), secret);
+    return Crypto.decrypt.buffer(Buffer.from(jlsmEncryptedData, 'base64url'), secret);
   },
 };

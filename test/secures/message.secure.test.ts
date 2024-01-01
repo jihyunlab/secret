@@ -7,6 +7,7 @@ import {
   SignatureException,
 } from '../../src/helpers/exception.helper';
 import { HASH, Hash } from '@jihyunlab/crypto';
+import { randomUUID } from 'crypto';
 
 describe('Message', () => {
   const processEnv = process.env;
@@ -73,31 +74,47 @@ describe('Message', () => {
 
   test('decode(): exception(NotSupportedException - typ)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JWT', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JWT', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
-      Secure.message.decode(`${header}.payload.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.payload.key.encryptedData.signature`);
     }).toThrow(NotSupportedException);
   });
 
   test('decode(): exception(NotSupportedException - alg)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'RS256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'RS256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
-      Secure.message.decode(`${header}.payload.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.payload.key.encryptedData.signature`);
     }).toThrow(NotSupportedException);
   });
 
   test('decode(): exception(NotSupportedException - enc)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256CCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256CCM' })
+      ).toString('base64url');
 
-      Secure.message.decode(`${header}.payload.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.payload.key.encryptedData.signature`);
     }).toThrow(NotSupportedException);
+  });
+
+  test('decode(): exception(NotFoundException - kid)', () => {
+    expect(() => {
+      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+
+      Secure.message.decode(`${header}.payload.key.encryptedData.signature`);
+    }).toThrow(NotFoundException);
   });
 
   test('decode(): exception(ExpiredException)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -109,13 +126,15 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      Secure.message.decode(`${header}.${payload}.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.${payload}.key.encryptedData.signature`);
     }).toThrow(ExpiredException);
   });
 
   test('decode(): exception(NotFoundException - jti empty)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -127,13 +146,15 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      Secure.message.decode(`${header}.${payload}.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.${payload}.key.encryptedData.signature`);
     }).toThrow(NotFoundException);
   });
 
   test('decode(): exception(NotFoundException - jti null)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -144,18 +165,20 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      Secure.message.decode(`${header}.${payload}.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.${payload}.key.encryptedData.signature`);
     }).toThrow(NotFoundException);
   });
 
-  test('decode(): exception(NotFoundException - key)', () => {
+  test('decode(): exception(NotFoundException - key null)', () => {
     process.env = {
       ...processEnv,
       JIHYUNLAB_SECRET_KEY: undefined,
     };
 
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -167,13 +190,15 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      Secure.message.decode(`${header}.${payload}.keys.encryptedData.signature`);
+      Secure.message.decode(`${header}.${payload}.key.encryptedData.signature`);
     }).toThrow(NotFoundException);
   });
 
-  test('decode(): exception(NotFoundException - keys)', () => {
+  test('decode(): exception(NotFoundException - key empty)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -185,15 +210,88 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      const keys = Buffer.from(JSON.stringify([])).toString('base64url');
+      const key = Buffer.from(JSON.stringify({ keys: [] })).toString('base64url');
 
-      Secure.message.decode(`${header}.${payload}.${keys}.encryptedData.signature`);
+      Secure.message.decode(`${header}.${payload}.${key}.encryptedData.signature`);
+    }).toThrow(NotFoundException);
+  });
+
+  test('decode(): exception(NotFoundException - kid is null of key)', () => {
+    expect(() => {
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
+
+      const current = Date.now();
+      const payload = Buffer.from(
+        JSON.stringify({
+          iss: 'https://jihyunlab.com',
+          iat: Math.floor(current / 1000),
+          exp: Math.floor(current / 1000) + 160,
+          jti: Hash.create(HASH.SHA256).update('').hex(),
+        })
+      ).toString('base64url');
+
+      const key = Buffer.from(
+        JSON.stringify({
+          keys: [
+            {
+              kty: 'EC',
+              crv: 'P-256',
+              use: 'sig',
+              x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
+              y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
+            },
+          ],
+        })
+      ).toString('base64url');
+
+      Secure.message.decode(`${header}.${payload}.${key}.encryptedData.signature`);
+    }).toThrow(NotFoundException);
+  });
+
+  test('decode(): exception(NotFoundException - key matching the kid)', () => {
+    expect(() => {
+      const header = Buffer.from(
+        JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: randomUUID(), enc: 'A256GCM' })
+      ).toString('base64url');
+
+      const current = Date.now();
+      const payload = Buffer.from(
+        JSON.stringify({
+          iss: 'https://jihyunlab.com',
+          iat: Math.floor(current / 1000),
+          exp: Math.floor(current / 1000) + 160,
+          jti: Hash.create(HASH.SHA256).update('').hex(),
+        })
+      ).toString('base64url');
+
+      const key = Buffer.from(
+        JSON.stringify({
+          keys: [
+            {
+              kty: 'EC',
+              crv: 'P-256',
+              use: 'sig',
+              kid: 'string',
+              x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
+              y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
+            },
+          ],
+        })
+      ).toString('base64url');
+
+      Secure.message.decode(`${header}.${payload}.${key}.encryptedData.signature`);
     }).toThrow(NotFoundException);
   });
 
   test('decode(): exception(SignatureException)', () => {
     expect(() => {
-      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', enc: 'A256GCM' })).toString('base64url');
+      const kid = randomUUID();
+
+      const header = Buffer.from(JSON.stringify({ typ: 'JLSM', alg: 'ES256', kid: kid, enc: 'A256GCM' })).toString(
+        'base64url'
+      );
 
       const current = Date.now();
       const payload = Buffer.from(
@@ -205,20 +303,23 @@ describe('Message', () => {
         })
       ).toString('base64url');
 
-      const keys = Buffer.from(
-        JSON.stringify([
-          {
-            kty: 'EC',
-            crv: 'P-256',
-            use: 'sig',
-            x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
-            y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
-          },
-        ])
+      const key = Buffer.from(
+        JSON.stringify({
+          keys: [
+            {
+              kty: 'EC',
+              crv: 'P-256',
+              use: 'sig',
+              kid: kid,
+              x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU',
+              y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0',
+            },
+          ],
+        })
       ).toString('base64url');
 
       Secure.message.decode(
-        `${header}.${payload}.${keys}.encryptedData.${Buffer.from('signature').toString('base64url')}`
+        `${header}.${payload}.${key}.encryptedData.${Buffer.from('signature').toString('base64url')}`
       );
     }).toThrow(SignatureException);
   });
