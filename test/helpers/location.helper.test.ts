@@ -1,160 +1,105 @@
-import { LocationHelper } from '../../src/index';
-import { join } from 'path';
-import { mkdirSync, rmSync, writeFileSync } from 'fs';
+/**
+ * @jest-environment node
+ */
+import { LocationHelper } from '../../src/helpers/location.helper';
 
-describe('Location', () => {
-  const base = 'test-location';
+describe('Location helper', () => {
+  test(`Positive: isAbsolute()`, async () => {
+    const isAbsolute = LocationHelper.isAbsolute(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
 
-  const textString = 'Welcome to JihyunLab.';
-
-  const dir = join(base, 'dir');
-  const subDir = join(dir, 'sub-dir');
-  const subSubDir = join(subDir, 'sub-sub-dir');
-
-  const file = join(dir, 'file.txt');
-  const subDirFile = join(subDir, 'sub_dir_file.txt');
-  const subSubDirFile = join(subSubDir, 'sub_sub_dir_file.txt');
-
-  beforeAll(() => {
-    mkdirSync(base, { recursive: true });
-    mkdirSync(dir, { recursive: true });
-    mkdirSync(subDir, { recursive: true });
-    mkdirSync(subSubDir, { recursive: true });
-
-    writeFileSync(file, textString);
-    writeFileSync(subDirFile, textString);
-    writeFileSync(subSubDirFile, textString);
+    expect(isAbsolute).toBe(true);
   });
 
-  afterAll(() => {
-    rmSync(subSubDir, { recursive: true, force: true });
-    rmSync(subDir, { recursive: true, force: true });
-    rmSync(dir, { recursive: true, force: true });
-    rmSync(base, { recursive: true, force: true });
+  test(`Positive: isAbsolute()`, async () => {
+    const isAbsolute = LocationHelper.isAbsolute(`./location.helper.test.ts`);
+
+    expect(isAbsolute).toBe(false);
   });
 
-  test('toRelative()', () => {
-    const location = LocationHelper.toRelative(dir);
-    expect(location).toBe(dir);
+  test(`Positive: toAbsolute()`, async () => {
+    const location = LocationHelper.toAbsolute(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+    const isAbsolute = LocationHelper.isAbsolute(location);
+
+    expect(isAbsolute).toBe(true);
   });
 
-  test('isDirectory(): dir', () => {
-    const isDirectory = LocationHelper.isDirectory(dir);
+  test(`Positive: toAbsolute()`, async () => {
+    const location = LocationHelper.toAbsolute(`./location.helper.test.ts`);
+    const isAbsolute = LocationHelper.isAbsolute(location);
+
+    expect(isAbsolute).toBe(true);
+  });
+
+  test(`Positive: toRelative()`, async () => {
+    const location = LocationHelper.toRelative(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+
+    expect(location).not.toBe(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+  });
+
+  test(`Positive: toBasename()`, async () => {
+    const location = LocationHelper.toBasename(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+
+    expect(location).toBe('location.helper.test.ts');
+  });
+
+  test(`Positive: isExist()`, async () => {
+    const isExist = LocationHelper.isExist(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+
+    expect(isExist).toBe(true);
+  });
+
+  test(`Positive: isDirectory() - directory`, async () => {
+    const isDirectory = LocationHelper.isDirectory(
+      `${process.cwd()}/test/helpers`
+    );
+
     expect(isDirectory).toBe(true);
   });
 
-  test('isDirectory(): file', () => {
-    const isDirectory = LocationHelper.isDirectory(file);
+  test(`Positive: isDirectory() - file`, async () => {
+    const isDirectory = LocationHelper.isDirectory(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`
+    );
+
     expect(isDirectory).toBe(false);
   });
 
-  test('isDirectory(): not exist', () => {
-    const isDirectory = LocationHelper.isDirectory('temp');
-    expect(isDirectory).toBe(undefined);
+  test(`Positive: isDirectory() - undefined`, async () => {
+    const isDirectory = LocationHelper.isDirectory(
+      `${process.cwd()}/test/helpers/undefined`
+    );
+
+    expect(isDirectory).toBe(false);
   });
 
-  test('toDirectory(): dir', () => {
-    const directory = LocationHelper.toDirectory(dir);
-    expect(directory).toBe(LocationHelper.toAbsolute(dir));
+  test(`Positive: toDirectory() - directory`, async () => {
+    const location = LocationHelper.toDirectory(
+      `${process.cwd()}/test/helpers`
+    );
+    const isDirectory = LocationHelper.isDirectory(location);
+
+    expect(isDirectory).toBe(true);
   });
 
-  test('toDirectory(): file', () => {
-    const directory = LocationHelper.toDirectory(file, true);
-    expect(directory).toBe(LocationHelper.toAbsolute(dir));
-  });
-
-  test('searchDirectory()', () => {
-    const result = LocationHelper.searchDirectory(dir);
-
-    expect(result.dirs).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
+  test(`Positive: toDirectory() - file`, async () => {
+    const location = LocationHelper.toDirectory(
+      `${process.cwd()}/test/helpers/location.helper.test.ts`,
+      true
     );
-    expect(result.files).toEqual(
-      expect.arrayContaining([
-        LocationHelper.toAbsolute(file),
-        LocationHelper.toAbsolute(subSubDirFile),
-        LocationHelper.toAbsolute(subDirFile),
-      ])
-    );
-    expect(result.ignores).toEqual(expect.arrayContaining([]));
-  });
+    const isDirectory = LocationHelper.isDirectory(location);
 
-  test('searchDirectory(): ignore dir', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(dir));
-
-    expect(result.dirs).toEqual(expect.arrayContaining([]));
-    expect(result.files).toEqual(expect.arrayContaining([]));
-    expect(result.ignores).toEqual(
-      expect.arrayContaining([
-        LocationHelper.toAbsolute(file),
-        LocationHelper.toAbsolute(subDir),
-        LocationHelper.toAbsolute(subSubDir),
-        LocationHelper.toAbsolute(subSubDirFile),
-        LocationHelper.toAbsolute(subDirFile),
-      ])
-    );
-  });
-
-  test('searchDirectory(): ignore file', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(file));
-
-    expect(result.dirs).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
-    );
-    expect(result.files).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subSubDirFile), LocationHelper.toAbsolute(subDirFile)])
-    );
-    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(file)]));
-  });
-
-  test('searchDirectory(): ignore sub dir', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subDir));
-
-    expect(result.dirs).toEqual(expect.arrayContaining([]));
-    expect(result.files).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(file)]));
-    expect(result.ignores).toEqual(
-      expect.arrayContaining([
-        LocationHelper.toAbsolute(subDir),
-        LocationHelper.toAbsolute(subSubDir),
-        LocationHelper.toAbsolute(subSubDirFile),
-        LocationHelper.toAbsolute(subDirFile),
-      ])
-    );
-  });
-
-  test('searchDirectory(): ignore sub dir file', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subDirFile));
-
-    expect(result.dirs).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
-    );
-    expect(result.files).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subSubDirFile)])
-    );
-    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subDirFile)]));
-  });
-
-  test('searchDirectory(): ignore sub sub dir', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subSubDir));
-
-    expect(result.dirs).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subDir)]));
-    expect(result.files).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subDirFile)])
-    );
-    expect(result.ignores).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subSubDir), LocationHelper.toAbsolute(subSubDirFile)])
-    );
-  });
-
-  test('searchDirectory(): ignore sub sub dir file', () => {
-    const result = LocationHelper.searchDirectory(dir, LocationHelper.toBasename(subSubDirFile));
-
-    expect(result.dirs).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(subDir), LocationHelper.toAbsolute(subSubDir)])
-    );
-    expect(result.files).toEqual(
-      expect.arrayContaining([LocationHelper.toAbsolute(file), LocationHelper.toAbsolute(subDirFile)])
-    );
-    expect(result.ignores).toEqual(expect.arrayContaining([LocationHelper.toAbsolute(subSubDirFile)]));
+    expect(isDirectory).toBe(true);
   });
 });

@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import ignore from 'ignore';
 
-export const Location = {
+export const LocationHelper = {
   isAbsolute(location: string) {
     return path.isAbsolute(location);
   },
@@ -36,7 +35,7 @@ export const Location = {
 
   isDirectory(location: string) {
     if (!this.isExist(location)) {
-      return undefined;
+      return false;
     }
 
     return fs.lstatSync(location).isDirectory();
@@ -52,69 +51,5 @@ export const Location = {
     }
 
     return path.normalize(dirname);
-  },
-
-  searchDirectory(location: string, ignores?: string): { dirs: string[]; files: string[]; ignores: string[] } {
-    const dirs: string[] = [];
-    const files: string[] = [];
-    const igs: string[] = [];
-
-    const ig = ignore();
-
-    if (ignores) {
-      ig.add(ignores);
-    }
-
-    const locationDirectory = this.toAbsolute(location);
-
-    fs.readdirSync(locationDirectory, { withFileTypes: true }).forEach((file) => {
-      const locationFile = path.join(locationDirectory, file.name);
-
-      if (file.isDirectory()) {
-        if (!ig.ignores(this.toRelative(locationFile))) {
-          dirs.push(locationFile);
-        } else {
-          igs.push(locationFile);
-        }
-
-        const result = this.searchDirectory(locationFile);
-
-        if (result.dirs) {
-          for (let i = 0; i < result.dirs.length; i++) {
-            const dir = result.dirs[i];
-
-            if (!ig.ignores(this.toRelative(dir))) {
-              dirs.push(dir);
-            } else {
-              igs.push(dir);
-            }
-          }
-        }
-
-        if (result.files) {
-          for (let i = 0; i < result.files.length; i++) {
-            const file = result.files[i];
-
-            if (!ig.ignores(this.toRelative(file))) {
-              files.push(file);
-            } else {
-              igs.push(file);
-            }
-          }
-        }
-
-        if (result.ignores) {
-          igs.push(...result.ignores);
-        }
-      } else {
-        if (!ig.ignores(this.toRelative(locationFile))) {
-          files.push(locationFile);
-        } else {
-          igs.push(locationFile);
-        }
-      }
-    });
-
-    return { dirs: dirs, files: files, ignores: igs };
   },
 };
