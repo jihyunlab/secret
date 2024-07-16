@@ -13,8 +13,6 @@ The encryption function is implemented with [@jihyunlab/crypto](https://www.npmj
 npm i @jihyunlab/secret
 ```
 
----
-
 ## Encryption key
 
 If you register JIHYUNLAB_SECRET_KEY in system or user environment variables, it will be used as the encryption key during encryption.
@@ -24,8 +22,6 @@ If you prefer to manage the encryption key separately, you can directly input th
 ```bash
 export JIHYUNLAB_SECRET_KEY=YourSecretKey
 ```
-
----
 
 ## Usage
 
