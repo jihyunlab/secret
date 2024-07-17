@@ -4,6 +4,19 @@
 import { CIPHER, EnvCipher } from '../../src/index';
 
 describe('Env cipher', () => {
+  const processEnv = process.env;
+
+  beforeAll(() => {
+    process.env = {
+      ...processEnv,
+      JIHYUNLAB_SECRET_KEY: undefined,
+    };
+  });
+
+  afterAll(() => {
+    process.env = processEnv;
+  });
+
   test(`Negative: createCipher() - secret does not exist.`, async () => {
     expect(async () => {
       await EnvCipher.create(CIPHER.AES_256_GCM);
