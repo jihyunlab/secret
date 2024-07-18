@@ -26,7 +26,7 @@ const value = await cipher.decrypt(process.env.ENV_KEY);
 
 ## Encryption key
 
-If you register JIHYUNLAB_SECRET_KEY in the system or user environment variables, it will be used as the encryption key during encryption.
+If you register JIHYUNLAB_SECRET_KEY in system or user environment variables, it will be used as the encryption key during encryption.
 
 ```bash
 export JIHYUNLAB_SECRET_KEY=YourSecretKey
