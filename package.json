@@ -1,6 +1,6 @@
 {
   "name": "@jihyunlab/secret",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "JihyunLab Secret.",
   "license": "MIT",
   "author": "JihyunLab <info@jihyunlab.com> (https://jihyunlab.com)",
@@ -26,7 +26,7 @@
     "decryption"
   ],
   "dependencies": {
-    "@jihyunlab/crypto": "^2.0.10",
+    "@jihyunlab/crypto": "^2.0.11",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {

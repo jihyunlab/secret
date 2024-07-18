@@ -13,33 +13,31 @@ The encryption function is implemented with [@jihyunlab/crypto](https://www.npmj
 npm i @jihyunlab/secret
 ```
 
-## Encryption key
-
-If you register JIHYUNLAB_SECRET_KEY in system or user environment variables, it will be used as the encryption key during encryption.
-
-If you prefer to manage the encryption key separately, you can directly input the encryption key to encrypt or decrypt the .env file.
-
-```bash
-export JIHYUNLAB_SECRET_KEY=YourSecretKey
-```
-
 ## Usage
 
-Decrypting the values in the .env file.
-
-```
-import { Env } from '@jihyunlab/secret';
-
-const cipher = await Env.createCipher();
-const value = await cipher.decrypt(process.env.ENV_KEY);
-```
-
-You can decrypt by directly entering a separately managed encryption key.
+Decrypt the .env key value by directly entering the separately managed encryption key.
 
 ```
 import { CIPHER, Env } from '@jihyunlab/secret';
 
 const cipher = await Env.createCipher(CIPHER.AES_256_GCM, 'YourSecretKey');
+const value = await cipher.decrypt(process.env.ENV_KEY);
+```
+
+## Encryption key
+
+If you register JIHYUNLAB_SECRET_KEY in the system or user environment variables, it will be used as the encryption key during encryption.
+
+```bash
+export JIHYUNLAB_SECRET_KEY=YourSecretKey
+```
+
+You can decrypt the .env key value using the encryption key registered in the environment variables.
+
+```
+import { Env } from '@jihyunlab/secret';
+
+const cipher = await Env.createCipher();
 const value = await cipher.decrypt(process.env.ENV_KEY);
 ```
 
